@@ -39,7 +39,7 @@ class Acquia < Thor
       n = Netrc.read
       @acquia_user, @acquia_password = n['cloudapi.acquia.com']
 
-      conn = Faraday.new(:proxy => "http://csydl217.au.fcl.internal:3128")
+      conn = Faraday.new
       conn.basic_auth(@acquia_user, @acquia_password)
       response = conn.get "https://cloudapi.acquia.com/v1/#{resource}.json"
       response.body
