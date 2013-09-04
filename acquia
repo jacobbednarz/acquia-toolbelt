@@ -2,6 +2,7 @@ require 'rubygems'
 require 'thor'
 require 'netrc'
 require 'highline/import'
+require 'faraday'
 
 class Acquia < Thor
   # A no_commands block is designed to show the methods that cannot be invoked
@@ -27,11 +28,23 @@ class Acquia < Thor
     def info(text)
       puts "\e[#36m#{text}\e[0m"
     end
-  }
 
-  acquia_api_version  = 'v1'
-  acquia_api_endpoint = 'https://cloudapi.acquia.com'
-  acquia_api_format   = 'json'
+    # Internal: Create a request to the Acquia API.
+    #
+    # The request generated contains all the correct user authentication and
+    # headers.
+    #
+    # Returns a JSON string of the body.s
+    def acquia_api_call(resource)
+      n = Netrc.read
+      @acquia_user, @acquia_password = n['cloudapi.acquia.com']
+
+      conn = Faraday.new(:proxy => "http://csydl217.au.fcl.internal:3128")
+      conn.basic_auth(@acquia_user, @acquia_password)
+      response = conn.get "https://cloudapi.acquia.com/v1/#{resource}.json"
+      response.body
+    end
+  }
 
   # Public: Log into the Acquia Cloud API.
   #
@@ -52,10 +65,15 @@ class Acquia < Thor
     success 'Your user credentials have been successfully set.'
   end
 
+  desc 'subscriptions', 'Find all subscriptions that you have access to.'
+  def subscriptions
+    say acquia_api_call('sites')
+  end
+
   # Public: Get server specs and information from the subscription.
   desc 'servers', 'Get a list of servers and specs associated with your subscription.'
   def servers
-    say 'getting servers'
+
   end
 
   # Public: Get all databases in the subscription.
