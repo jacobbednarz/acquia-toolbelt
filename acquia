@@ -69,6 +69,8 @@ class Acquia < Thor
   #
   # This sets up the user account within the netrc file so that subsequent
   # calls can reuse the authentication without the user being prompted for it.
+  #
+  # Returns the status of your login attempt.
   desc "login", "Login to your Acquia account."
   def login
     user = ask "Enter your username:"
@@ -84,11 +86,15 @@ class Acquia < Thor
     success "Your user credentials have been successfully set."
   end
 
+  # Public: Display an overview of the subscriptions.
+  #
+  # Returns all subscriptions with their respective data.
   desc "list-subscriptions", "Find all subscriptions that you have access to."
   def list_subscriptions
     subscriptions = JSON.parse(acquia_api_call("sites"))
 
     subscriptions.each do |subscription|
+      say
       # Get the individual subscription information.
       subscription_info = JSON.parse(acquia_api_call("sites/#{subscription}"))
       say "#{subscription_info["title"]}"
@@ -102,14 +108,16 @@ class Acquia < Thor
       else
         say "> #{subscription_info["vcs_type"].capitalize} URL: #{subscription_info["vcs_url"]}"
       end
-      say
     end
   end
 
   # Public: Provide an overview of the environments in your subscription.
-  desc "view-environments <subscription>", "Provide an overview of the environments in your subscription."
+  #
+  # Returns the environment data in a pretty format.
+  desc "list-environments <subscription>", "Provide an overview of the environments in your subscription."
   option :environment, :aliases => "-e"
-  def view_environments(subscription)
+  def list_environments(subscription)
+    # If the environment option is set, just fetch a single environment.
     if options[:environment]
       subscriptions_details = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{options[:environment]}"))
 
@@ -123,26 +131,35 @@ class Acquia < Thor
 
     subscription_envs = JSON.parse(acquia_api_call("sites/#{subscription}/envs"))
     subscription_envs.each do |env|
+      say
       say "> Host: #{env["ssh_host"]}"
       say "> Environment: #{env["name"]}"
       say "> Current release: #{env["vcs_path"]}"
       say "> DB clusters: #{env["db_clusters"].to_s unless env["db_clusters"].nil?}"
       say "> Default domain: #{env["default_domain"]}"
-      say
     end
   end
 
-  def servers
-  # Public: Get server specs and information from the environment.
-  desc "view-servers <subscription> <environment>", "Get a list of servers specifications for an environment."
-  def view_servers(subscription, environment)
-    server_env = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/servers"))
+  # Public: Get server specs and information from an environment.
+  #
+  # This allows the ability to get all the server data from all server types
+  # that are available within the subscription's environments.
+  #
+  # Returns server information on a per environment basis.
+  desc "list-servers <subscription>", "Get a list of servers specifications for an environment."
+  option :environment, :aliases => "-e"
+  def list_servers(subscription)
+    server_env = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{options[:environment]}/servers"))
+
     server_env.each do |server|
+      say
       say "> Host: #{server["fqdn"]}"
       say "> EC2 region: #{server["ec2_region"]}"
       say "> Availability zone: #{server["ec2_availability_zone"]}"
       say "> EC2 instance type: #{server["ami_type"]}"
 
+      # Show how many PHP processes this node can have. Note, this is only
+      # available on the web servers.
       if server["services"] && server["services"]["php_max_procs"]
         say "> PHP max processes: #{server["services"]["php_max_procs"]}"
       end
@@ -152,9 +169,18 @@ class Acquia < Thor
       end
 
       if server["services"] && server["services"]["web"]
-        say "> Environment status: #{server["services"]["web"]["env_status"]}"
+        say "> Web status: #{server["services"]["web"]["env_status"]}"
       end
-      say
+
+      # The state of varnish.
+      if server["services"] && server["services"]["varnish"]
+        say "> Varnish status: #{server["services"]["varnish"]["status"]}"
+      end
+
+      # Only load balancers will have the "external IP" property.
+      if server["services"] && server["services"]["external_ip"]
+        say "> External IP: #{server["services"]["external_ip"]}"
+      end
     end
   end
 
@@ -164,22 +190,16 @@ class Acquia < Thor
     say "getting databases"
   end
 
-  # Public: Get all environment information.
-  desc "environments", "See all available environments."
-  def environments
-    say "getting environments"
-  end
-
   # Public: Get users on the subscription.
-  desc "view-users <subscription>", "Find out who has access and keys within your subscription."
-  def view_users(subscription)
+  desc "list-users <subscription>", "Find out who has access and keys within your subscription."
+  def list_users(subscription)
     users = JSON.parse(acquia_api_call("sites/#{subscription}/sshkeys"))
 
     say "Users"
     users.each do |user|
+      say
       say "> Name: #{user["nickname"]} (#{user["id"]})"
       say "> Key: #{truncate_ssh_key user["ssh_pub_key"]}"
-      say
     end
   end
 end
