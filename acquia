@@ -64,6 +64,16 @@ class Acquia < Thor
     n.save
 
     success 'Your user credentials have been successfully set.'
+  desc "list-subscriptions", "Find all subscriptions that you have access to."
+  def list_subscriptions
+    subscriptions = JSON.parse(acquia_api_call("sites"))
+
+    say "Available subscriptions:"
+    subscription_count = 1
+    subscriptions.each do |s|
+      say "[#{subscription_count}] #{s}"
+      subscription_count + 1
+    end
   end
 
   desc 'subscriptions', 'Find all subscriptions that you have access to.'
