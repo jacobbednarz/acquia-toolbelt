@@ -88,11 +88,21 @@ class Acquia < Thor
   def list_subscriptions
     subscriptions = JSON.parse(acquia_api_call("sites"))
 
-    say "Available subscriptions:"
-    subscription_count = 1
-    subscriptions.each do |s|
-      say "[#{subscription_count}] #{s}"
-      subscription_count + 1
+    subscriptions.each do |subscription|
+      # Get the individual subscription information.
+      subscription_info = JSON.parse(acquia_api_call("sites/#{subscription}"))
+      say "#{subscription_info["title"]}"
+      say "> Username: #{subscription_info["unix_username"]}"
+      say "> Subscription: #{subscription_info["name"]}"
+
+      # If the VCS type is SVN, we want it in all uppercase, otherwise just
+      # capitilise it.
+      if subscription_info["vcs_type"] == 'svn'
+        say "> #{subscription_info["vcs_type"].upcase} URL: #{subscription_info["vcs_url"]}"
+      else
+        say "> #{subscription_info["vcs_type"].capitalize} URL: #{subscription_info["vcs_url"]}"
+      end
+      say
     end
   end
 
