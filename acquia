@@ -74,7 +74,29 @@ class Acquia < Thor
   # Public: Get server specs and information from the subscription.
   desc 'servers', 'Get a list of servers and specs associated with your subscription.'
   def servers
+  # Public: Get server specs and information from the environment.
+  desc "view-servers <subscription> <environment>", "Get a list of servers specifications for an environment."
+  def view_servers(subscription, environment)
+    server_env = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/servers"))
+    server_env.each do |server|
+      say "> Host: #{server["fqdn"]}"
+      say "> EC2 region: #{server["ec2_region"]}"
+      say "> Availability zone: #{server["ec2_availability_zone"]}"
+      say "> EC2 instance type: #{server["ami_type"]}"
 
+      if server["services"] && server["services"]["php_max_procs"]
+        say "> PHP max processes: #{server["services"]["php_max_procs"]}"
+      end
+
+      if server["services"] && server["services"]["status"]
+        say "> Status: #{server["services"]["status"]}"
+      end
+
+      if server["services"] && server["services"]["web"]
+        say "> Environment status: #{server["services"]["web"]["env_status"]}"
+      end
+      say
+    end
   end
 
   # Public: Get all databases in the subscription.
