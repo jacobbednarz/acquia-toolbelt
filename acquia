@@ -1,8 +1,9 @@
-require 'rubygems'
-require 'thor'
-require 'netrc'
-require 'highline/import'
-require 'faraday'
+require "rubygems"
+require "thor"
+require "netrc"
+require "highline/import"
+require "faraday"
+require "json"
 
 class Acquia < Thor
   # A no_commands block is designed to show the methods that cannot be invoked
