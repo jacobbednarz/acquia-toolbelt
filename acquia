@@ -146,10 +146,9 @@ class Acquia < Thor
   # that are available within the subscription's environments.
   #
   # Returns server information on a per environment basis.
-  desc "list-servers <subscription>", "Get a list of servers specifications for an environment."
-  option :environment, :aliases => "-e"
-  def list_servers(subscription)
-    server_env = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{options[:environment]}/servers"))
+  desc "list-servers <subscription> <environment>", "Get a list of servers specifications for an environment."
+  def list_servers(subscription, environment)
+    server_env = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/servers"))
 
     server_env.each do |server|
       say
@@ -169,7 +168,7 @@ class Acquia < Thor
       end
 
       if server["services"] && server["services"]["web"]
-        say "> Web status: #{server["services"]["web"]["env_status"]}"
+        say "> Web status: #{server["services"]["web"]["status"]}"
       end
 
       # The state of varnish.
@@ -195,7 +194,6 @@ class Acquia < Thor
   def list_users(subscription)
     users = JSON.parse(acquia_api_call("sites/#{subscription}/sshkeys"))
 
-    say "Users"
     users.each do |user|
       say
       say "> Name: #{user["nickname"]} (#{user["id"]})"
