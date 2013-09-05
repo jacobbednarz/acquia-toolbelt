@@ -35,15 +35,21 @@ class Acquia < Thor
     # The request generated contains all the correct user authentication and
     # headers.
     #
-    # Returns a JSON string of the body.s
-    def acquia_api_call(resource)
+    # Returns a JSON string of the body.
+    def acquia_api_call(resource, method = "GET", data = {})
       n = Netrc.read
-      @acquia_user, @acquia_password = n['cloudapi.acquia.com']
+      @acquia_user, @acquia_password = n["cloudapi.acquia.com"]
 
       conn = Faraday.new
       conn.basic_auth(@acquia_user, @acquia_password)
-      response = conn.get "https://cloudapi.acquia.com/v1/#{resource}.json"
-      response.body
+
+      if method == "GET"
+        response = conn.get "https://cloudapi.acquia.com/v1/#{resource}.json"
+        response.body
+      else
+      end
+    end
+
     # Internal: Truncate a SSH key to a secure and recognisable size.
     #
     # Displaying whole SSH keys is probably a bad idea so instead we are getting
@@ -63,19 +69,21 @@ class Acquia < Thor
   #
   # This sets up the user account within the netrc file so that subsequent
   # calls can reuse the authentication without the user being prompted for it.
-  desc 'login', 'Login to your Acquia account.'
+  desc "login", "Login to your Acquia account."
   def login
-    user = ask 'Enter your username:'
-    password = ask 'Enter your password:'
+    user = ask "Enter your username:"
+    password = ask "Enter your password:"
 
     # Update (or create if needed) the netrc file that will contain the user
     # authentication details.
     n = Netrc.read
     n.new_item_prefix = "# This entry was added for connecting to the Acquia Cloud API\n"
-    n['cloudapi.acquia.com'] = user, password
+    n["cloudapi.acquia.com"] = user, password
     n.save
 
-    success 'Your user credentials have been successfully set.'
+    success "Your user credentials have been successfully set."
+  end
+
   desc "list-subscriptions", "Find all subscriptions that you have access to."
   def list_subscriptions
     subscriptions = JSON.parse(acquia_api_call("sites"))
@@ -88,9 +96,6 @@ class Acquia < Thor
     end
   end
 
-  desc 'subscriptions', 'Find all subscriptions that you have access to.'
-  def subscriptions
-    say acquia_api_call('sites')
   # Public: Provide an overview of the environments in your subscription.
   desc "view-environments <subscription>", "Provide an overview of the environments in your subscription."
   option :environment, :aliases => "-e"
@@ -117,8 +122,6 @@ class Acquia < Thor
     end
   end
 
-  # Public: Get server specs and information from the subscription.
-  desc 'servers', 'Get a list of servers and specs associated with your subscription.'
   def servers
   # Public: Get server specs and information from the environment.
   desc "view-servers <subscription> <environment>", "Get a list of servers specifications for an environment."
@@ -146,21 +149,18 @@ class Acquia < Thor
   end
 
   # Public: Get all databases in the subscription.
-  desc 'databases', 'Get information on the database servers within your subscription.'
+  desc "databases", "Get information on the database servers within your subscription."
   def databases
-    say 'getting databases'
+    say "getting databases"
   end
 
   # Public: Get all environment information.
-  desc 'environments', 'See all available environments.'
+  desc "environments", "See all available environments."
   def environments
-    say 'getting environments'
+    say "getting environments"
   end
 
   # Public: Get users on the subscription.
-  desc 'users', 'Find out who has access and keys within your subscription.'
-  def users
-    say 'getting users'
   desc "view-users <subscription>", "Find out who has access and keys within your subscription."
   def view_users(subscription)
     users = JSON.parse(acquia_api_call("sites/#{subscription}/sshkeys"))
