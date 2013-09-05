@@ -124,3 +124,9 @@ $ acquia list-users subscription-1
 > Name: my-home-machine (12345)
 > Key: ssh-rsa AAAAB358587C1yc2EAAAADAQ...kJ97239OqYu+kR1HSMYH me@example.com
 ```
+
+## Contibuting
+
+Changes and feedback are highly encouraged so feel free to
+[open a pull request](https://github.com/jacobbednarz/acquia-toolbelt/pulls)
+with your changes or drop an issue if you are having any problems.
