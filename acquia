@@ -79,6 +79,30 @@ class Acquia < Thor
   desc 'subscriptions', 'Find all subscriptions that you have access to.'
   def subscriptions
     say acquia_api_call('sites')
+  # Public: Provide an overview of the environments in your subscription.
+  desc "view-environments <subscription>", "Provide an overview of the environments in your subscription."
+  option :environment, :aliases => "-e"
+  def view_environments(subscription)
+    if options[:environment]
+      subscriptions_details = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{options[:environment]}"))
+
+      say "> Host: #{subscriptions_details["ssh_host"]}"
+      say "> Environment: #{subscriptions_details["name"]}"
+      say "> Current release: #{subscriptions_details["vcs_path"]}"
+      say "> DB clusters: #{subscriptions_details["db_clusters"].to_s unless subscriptions_details["db_clusters"].nil?}"
+      say "> Default domain: #{subscriptions_details["default_domain"]}"
+      return
+    end
+
+    subscription_envs = JSON.parse(acquia_api_call("sites/#{subscription}/envs"))
+    subscription_envs.each do |env|
+      say "> Host: #{env["ssh_host"]}"
+      say "> Environment: #{env["name"]}"
+      say "> Current release: #{env["vcs_path"]}"
+      say "> DB clusters: #{env["db_clusters"].to_s unless env["db_clusters"].nil?}"
+      say "> Default domain: #{env["default_domain"]}"
+      say
+    end
   end
 
   # Public: Get server specs and information from the subscription.
