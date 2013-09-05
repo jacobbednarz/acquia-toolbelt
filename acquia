@@ -161,6 +161,16 @@ class Acquia < Thor
   desc 'users', 'Find out who has access and keys within your subscription.'
   def users
     say 'getting users'
+  desc "view-users <subscription>", "Find out who has access and keys within your subscription."
+  def view_users(subscription)
+    users = JSON.parse(acquia_api_call("sites/#{subscription}/sshkeys"))
+
+    say "Users"
+    users.each do |user|
+      say "> Name: #{user["nickname"]} (#{user["id"]})"
+      say "> Key: #{truncate_ssh_key user["ssh_pub_key"]}"
+      say
+    end
   end
 end
 
