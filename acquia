@@ -223,6 +223,11 @@ class Acquia < Thor
   end
 
   # Public: Get users on the subscription.
+  #
+  # Display a user listing with a truncated SSH key for security and ease of
+  # use.
+  #
+  # Returns a list of users and truncated SSH keys.
   desc "list-users <subscription>", "Find out who has access and keys within your subscription."
   def list_users(subscription)
     users = JSON.parse(acquia_api_call("sites/#{subscription}/sshkeys"))
