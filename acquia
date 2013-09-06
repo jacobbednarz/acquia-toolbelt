@@ -50,6 +50,23 @@ class Acquia < Thor
       end
     end
 
+    # Internal: Get defined subscription environments.
+    #
+    # This is a helper method that fetches all the available environments for a
+    # subscription and returns them for use in other methods.
+    #
+    # Returns an array of environments.
+    def get_acquia_environments(subscription)
+      env_data = JSON.parse(acquia_api_call("sites/#{subscription}/envs"))
+
+      envs = []
+      env_data.each do |env|
+        envs << env["name"]
+      end
+
+      envs
+    end
+
     # Internal: Truncate a SSH key to a secure and recognisable size.
     #
     # Displaying whole SSH keys is probably a bad idea so instead we are getting
