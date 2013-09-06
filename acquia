@@ -85,6 +85,22 @@ class Acquia < Thor
       back_part  = ssh_key[-50, 50]
       new_ssh_key = "#{front_part}...#{back_part}"
     end
+
+    # Internal: Send a request to purge a domain.
+    #
+    # Purge the web cache via an API call.
+    #
+    # Returns a status message.
+    def purge_acquia_domain(subscription, environment, domain)
+      # Ensure all the required fields are available.
+      if subscription.nil? || environment.nil? || domain.nil?
+        fail "Purge request is missing a required parameter."
+        return
+      end
+
+      purge_request = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/domains/#{domain}/cache", "DELETE"))
+      success "#{domain} has been successfully purged." if purge_request["id"]
+    end
   }
 
   # Public: Log into the Acquia Cloud API.
