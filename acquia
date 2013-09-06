@@ -43,8 +43,13 @@ class Acquia < Thor
       conn = Faraday.new
       conn.basic_auth(@acquia_user, @acquia_password)
 
-      if method == "GET"
+      case method
+      when "GET"
         response = conn.get "https://cloudapi.acquia.com/v1/#{resource}.json"
+        response.body
+      when "POST"
+      when "DELETE"
+        response = conn.delete "https://cloudapi.acquia.com/v1/#{resource}.json"
         response.body
       else
       end
