@@ -179,39 +179,54 @@ class Acquia < Thor
   # that are available within the subscription's environments.
   #
   # Returns server information on a per environment basis.
-  desc "list-servers <subscription> <environment>", "Get a list of servers specifications for an environment."
-  def list_servers(subscription, environment)
-    server_env = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/servers"))
+  desc "list-servers <subscription>", "Get a list of servers specifications for an environment."
+  option :environment, :aliases => "-e"
+  def list_servers(subscription)
+    # Determine if we want just a single environment, or all of them at once.
+    if options[:environment]
+      subscription_envs = [options[:environment]]
+    else
+      subscription_envs = get_acquia_environments(subscription)
+    end
 
-    server_env.each do |server|
-      say
-      say "> Host: #{server["fqdn"]}"
-      say "> EC2 region: #{server["ec2_region"]}"
-      say "> Availability zone: #{server["ec2_availability_zone"]}"
-      say "> EC2 instance type: #{server["ami_type"]}"
-
-      # Show how many PHP processes this node can have. Note, this is only
-      # available on the web servers.
-      if server["services"] && server["services"]["php_max_procs"]
-        say "> PHP max processes: #{server["services"]["php_max_procs"]}"
+    # Loop over each environment and get all the associated server data.
+    subscription_envs.each do |environment|
+      if options[:environment].nil?
+        say
+        say "Environment: #{environment}"
       end
 
-      if server["services"] && server["services"]["status"]
-        say "> Status: #{server["services"]["status"]}"
-      end
+      server_env = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/servers"))
+      server_env.each do |server|
+        say
+        say "> Host: #{server["fqdn"]}"
+        say "> EC2 region: #{server["ec2_region"]}"
+        say "> Availability zone: #{server["ec2_availability_zone"]}"
+        say "> EC2 instance type: #{server["ami_type"]}"
 
-      if server["services"] && server["services"]["web"]
-        say "> Web status: #{server["services"]["web"]["status"]}"
-      end
+        # Show how many PHP processes this node can have. Note, this is only
+        # available on the web servers.
+        if server["services"] && server["services"]["php_max_procs"]
+          say "> PHP max processes: #{server["services"]["php_max_procs"]}"
+        end
 
-      # The state of varnish.
-      if server["services"] && server["services"]["varnish"]
-        say "> Varnish status: #{server["services"]["varnish"]["status"]}"
-      end
+        if server["services"] && server["services"]["status"]
+          say "> Status: #{server["services"]["status"]}"
+        end
 
-      # Only load balancers will have the "external IP" property.
-      if server["services"] && server["services"]["external_ip"]
-        say "> External IP: #{server["services"]["external_ip"]}"
+        if server["services"] && server["services"]["web"]
+          say "> Web status: #{server["services"]["web"]["status"]}"
+        end
+
+        # The state of varnish.
+        if server["services"] && server["services"]["varnish"]
+          say "> Varnish status: #{server["services"]["varnish"]["status"]}"
+        end
+
+        # Only load balancers will have the "external IP" property.
+        if server["services"] && server["services"]["external_ip"]
+          say "> External IP: #{server["services"]["external_ip"]}"
+        end
       end
     end
   end
