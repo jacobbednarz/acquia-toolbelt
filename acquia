@@ -141,24 +141,19 @@ class Acquia < Thor
   def list_environments(subscription)
     # If the environment option is set, just fetch a single environment.
     if options[:environment]
-      subscriptions_details = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{options[:environment]}"))
-
-      say "> Host: #{subscriptions_details["ssh_host"]}"
-      say "> Environment: #{subscriptions_details["name"]}"
-      say "> Current release: #{subscriptions_details["vcs_path"]}"
-      say "> DB clusters: #{subscriptions_details["db_clusters"].to_s unless subscriptions_details["db_clusters"].nil?}"
-      say "> Default domain: #{subscriptions_details["default_domain"]}"
-      return
+      subscription_envs = [options[:environment]]
+    else
+      subscription_envs = get_acquia_environments(subscription)
     end
 
-    subscription_envs = JSON.parse(acquia_api_call("sites/#{subscription}/envs"))
-    subscription_envs.each do |env|
+    subscription_envs.each do |environment|
+      env_info = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}"))
       say
-      say "> Host: #{env["ssh_host"]}"
-      say "> Environment: #{env["name"]}"
-      say "> Current release: #{env["vcs_path"]}"
-      say "> DB clusters: #{env["db_clusters"].to_s unless env["db_clusters"].nil?}"
-      say "> Default domain: #{env["default_domain"]}"
+      say "> Host: #{env_info["ssh_host"]}"
+      say "> Environment: #{env_info["name"]}"
+      say "> Current release: #{env_info["vcs_path"]}"
+      say "> DB clusters: #{env_info["db_clusters"].to_s unless env_info["db_clusters"].nil?}"
+      say "> Default domain: #{env_info["default_domain"]}"
     end
   end
 
