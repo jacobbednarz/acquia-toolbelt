@@ -235,6 +235,65 @@ class Acquia < Thor
   desc "databases", "Get information on the database servers within your subscription."
   def databases
     say "getting databases"
+  # Public: Show all the available domains for a subscription.
+  #
+  # Returns a list of the domains available.
+  desc "list-domains <subscription>", "Show all available domains for a subscription."
+  option :environment, :aliases => "-e"
+  def list_domains(subscription)
+    if options[:environment]
+      subscription_envs = [options[:environment]]
+    else
+      subscription_envs = get_acquia_environments(subscription)
+    end
+
+    subscription_envs.each do |environment|
+      domains = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/domains"))
+      # Got top padding?
+      if options[:environment]
+        say
+      else
+        say
+        say "Environment: #{environment}"
+      end
+      domains.each do |domain|
+        say "> #{domain["name"]}"
+      end
+    end
+  end
+
+  # Public: Clear a web cache on a domain.
+  #
+  # Send off a DELETE request to clear the web cache for a particular domain or
+  # environment.
+  #
+  # Note: Clearing a whole domain is pretty perfomance heavy - use with caution!
+  #
+  # Returns a status message form the purge request.
+  desc "purge-domain <subscription> <environment> <domain>", ""
+  option :environment, :aliases => "-e", :required => true
+  option :domain, :aliases => "-d"
+  def purge_domain(subscription)
+    domain = options[:domain]
+    environment = options[:environment]
+
+    # If the domain is not defined, we are going to clear a whole environmnt.
+    # This can have severe performance impacts on your environments. We need to
+    # be sure this is defintely what you want to do.
+    if domain
+      purge_acquia_domain(subscription, environment, domain)
+    else
+      all_env_clear = ask "You are about to clear all domains in the #{environment} environment. Are you sure? (y/n)"
+      # Last chance to bail out.
+      if all_env_clear == "y"
+        domains = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/domains"))
+        domains.each do |domain|
+          purge_acquia_domain("#{subscription}", "#{environment}", "#{domain["name"]}")
+        end
+      else
+        info "Ok, no action has been taken."
+      end
+    end
   end
 
   # Public: Get users on the subscription.
