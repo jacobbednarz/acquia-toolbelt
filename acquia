@@ -296,6 +296,20 @@ class Acquia < Thor
     end
   end
 
+  # Public: Get all the SVN users.
+  #
+  # Returns a list of the SVN users.
+  desc "list-svn-users <subscription>", "See all the SVN users on a subscription."
+  def list_svn_users(subscription)
+    svn_users = acquia_api_call "sites/#{subscription}/svnusers"
+
+    svn_users.each do |user|
+      say
+      say "> ID: #{user["id"]}"
+      say "> Name: #{user["username"]}"
+    end
+  end
+
   # Public: Get users on the subscription.
   #
   # Display a user listing with a truncated SSH key for security and ease of
