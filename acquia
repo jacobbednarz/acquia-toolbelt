@@ -86,7 +86,7 @@ class Acquia < Thor
       new_ssh_key = "#{front_part}...#{back_part}"
     end
 
-    # Internal: Send a request to purge a domain.
+    # Internal: Send a request to purge a domain's cache.
     #
     # Purge the web cache via an API call.
     #
@@ -98,7 +98,7 @@ class Acquia < Thor
         return
       end
 
-      purge_request = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/domains/#{domain}/cache", "DELETE"))
+      purge_request = acquia_api_call("sites/#{subscription}/envs/#{environment}/domains/#{domain}/cache", "DELETE")
       success "#{domain} has been successfully purged." if purge_request["id"]
     end
   }
