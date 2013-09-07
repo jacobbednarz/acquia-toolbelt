@@ -1,4 +1,5 @@
-require "rubygems"
+#!/usr/bin/env ruby
+
 require "thor"
 require "netrc"
 require "highline/import"
@@ -40,6 +41,7 @@ class Acquia < Thor
       n = Netrc.read
       @acquia_user, @acquia_password = n["cloudapi.acquia.com"]
 
+      #conn = Faraday.new(:proxy => "http://csydl217.au.fcl.internal:3128")
       conn = Faraday.new
       conn.basic_auth(@acquia_user, @acquia_password)
 
@@ -232,9 +234,12 @@ class Acquia < Thor
   end
 
   # Public: Get all databases in the subscription.
-  desc "databases", "Get information on the database servers within your subscription."
-  def databases
-    say "getting databases"
+  desc "list-databases", "See all the databases within a subscription."
+  def list_databases
+    databases = acquia_api_call "sites/#{subscription}/sshkeys"
+    say databases
+  end
+
   # Public: Show all the available domains for a subscription.
   #
   # Returns a list of the domains available.
@@ -267,10 +272,11 @@ class Acquia < Thor
   # Send off a DELETE request to clear the web cache for a particular domain or
   # environment.
   #
-  # Note: Clearing a whole domain is pretty perfomance heavy - use with caution!
+  # Note: Clearing a whole environment is pretty perfomance heavy - use with
+  # caution!
   #
   # Returns a status message form the purge request.
-  desc "purge-domain <subscription> <environment> <domain>", ""
+  desc "purge-domain <subscription>", ""
   option :environment, :aliases => "-e", :required => true
   option :domain, :aliases => "-d"
   def purge_domain(subscription)
@@ -308,6 +314,12 @@ class Acquia < Thor
       say "> ID: #{user["id"]}"
       say "> Name: #{user["username"]}"
     end
+  end
+
+  desc "delete-svn-user <subscription> <userid>", "Delete a SVN user."
+  def delete_svn_user(subscription, userid)
+    svn_user_removal = acquia_api_call "sites/#{subscription}/svnusers/#{userid}", "DELETE"
+    success "#{userid} has been removed from the SVN users." if svn_user_removal["id"]
   end
 
   # Public: Get users on the subscription.
