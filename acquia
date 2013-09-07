@@ -46,11 +46,11 @@ class Acquia < Thor
       case method
       when "GET"
         response = conn.get "https://cloudapi.acquia.com/v1/#{resource}.json"
-        response.body
+        JSON.parse response.body
       when "POST"
       when "DELETE"
         response = conn.delete "https://cloudapi.acquia.com/v1/#{resource}.json"
-        response.body
+        JSON.parse response.body
       else
       end
     end
@@ -62,7 +62,7 @@ class Acquia < Thor
     #
     # Returns an array of environments.
     def get_acquia_environments(subscription)
-      env_data = JSON.parse(acquia_api_call("sites/#{subscription}/envs"))
+      env_data = acquia_api_call("sites/#{subscription}/envs")
 
       envs = []
       env_data.each do |env|
@@ -129,12 +129,12 @@ class Acquia < Thor
   # Returns all subscriptions with their respective data.
   desc "list-subscriptions", "Find all subscriptions that you have access to."
   def list_subscriptions
-    subscriptions = JSON.parse(acquia_api_call("sites"))
+    subscriptions = acquia_api_call("sites")
 
     subscriptions.each do |subscription|
       say
       # Get the individual subscription information.
-      subscription_info = JSON.parse(acquia_api_call("sites/#{subscription}"))
+      subscription_info = acquia_api_call("sites/#{subscription}")
       say "#{subscription_info["title"]}"
       say "> Username: #{subscription_info["unix_username"]}"
       say "> Subscription: #{subscription_info["name"]}"
@@ -163,7 +163,7 @@ class Acquia < Thor
     end
 
     subscription_envs.each do |environment|
-      env_info = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}"))
+      env_info = acquia_api_call("sites/#{subscription}/envs/#{environment}")
       say
       say "> Host: #{env_info["ssh_host"]}"
       say "> Environment: #{env_info["name"]}"
@@ -196,7 +196,7 @@ class Acquia < Thor
         say "Environment: #{environment}"
       end
 
-      server_env = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/servers"))
+      server_env = acquia_api_call("sites/#{subscription}/envs/#{environment}/servers")
       server_env.each do |server|
         say
         say "> Host: #{server["fqdn"]}"
@@ -248,7 +248,7 @@ class Acquia < Thor
     end
 
     subscription_envs.each do |environment|
-      domains = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/domains"))
+      domains = acquia_api_call("sites/#{subscription}/envs/#{environment}/domains")
       # Got top padding?
       if options[:environment]
         say
@@ -286,7 +286,7 @@ class Acquia < Thor
       all_env_clear = ask "You are about to clear all domains in the #{environment} environment. Are you sure? (y/n)"
       # Last chance to bail out.
       if all_env_clear == "y"
-        domains = JSON.parse(acquia_api_call("sites/#{subscription}/envs/#{environment}/domains"))
+        domains = acquia_api_call("sites/#{subscription}/envs/#{environment}/domains")
         domains.each do |domain|
           purge_acquia_domain("#{subscription}", "#{environment}", "#{domain["name"]}")
         end
@@ -302,13 +302,14 @@ class Acquia < Thor
   # use.
   #
   # Returns a list of users and truncated SSH keys.
-  desc "list-users <subscription>", "Find out who has access and keys within your subscription."
-  def list_users(subscription)
-    users = JSON.parse(acquia_api_call("sites/#{subscription}/sshkeys"))
+  desc "list-ssh-users <subscription>", "Find out who has access and SSH keys."
+  def list_ssh_users(subscription)
+    users = acquia_api_call("sites/#{subscription}/sshkeys")
 
     users.each do |user|
       say
-      say "> Name: #{user["nickname"]} (#{user["id"]})"
+      say "> ID: #{user["id"]}"
+      say "> Name: #{user["nickname"]}"
       say "> Key: #{truncate_ssh_key user["ssh_pub_key"]}"
     end
   end
