@@ -41,8 +41,13 @@ class Acquia < Thor
       n = Netrc.read
       @acquia_user, @acquia_password = n["cloudapi.acquia.com"]
 
-      #conn = Faraday.new(:proxy => "http://csydl217.au.fcl.internal:3128")
-      conn = Faraday.new
+      # Check if the user is behind a proxy and add the proxy settings if found.
+      if using_proxy?
+        conn = Faraday.new(:proxy => ENV["HTTPS_PROXY"])
+      else
+        conn = Faraday.new
+      end
+
       conn.basic_auth(@acquia_user, @acquia_password)
 
       case method
@@ -104,6 +109,17 @@ class Acquia < Thor
 
       purge_request = acquia_api_call "sites/#{subscription}/envs/#{environment}/domains/#{domain}/cache", "DELETE"
       success "#{domain} has been successfully purged." if purge_request["id"]
+    end
+
+    # Internal: Check whether a proxy is in use.
+    #
+    # Return boolean based on whether HTTPS_PROXY is set.
+    def using_proxy?
+      if ENV["HTTPS_PROXY"]
+        true
+      else
+        false
+      end
     end
   }
 
