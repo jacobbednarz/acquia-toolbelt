@@ -50,6 +50,8 @@ class Acquia < Thor
         response = conn.get "https://cloudapi.acquia.com/v1/#{resource}.json"
         JSON.parse response.body
       when "POST"
+        response = conn.post "https://cloudapi.acquia.com/v1/#{resource}.json", data.to_json
+        JSON.parse response.body
       when "DELETE"
         response = conn.delete "https://cloudapi.acquia.com/v1/#{resource}.json"
         JSON.parse response.body
@@ -233,11 +235,101 @@ class Acquia < Thor
     end
   end
 
-  # Public: Get all databases in the subscription.
-  desc "list-databases", "See all the databases within a subscription."
-  def list_databases
-    databases = acquia_api_call "sites/#{subscription}/sshkeys"
-    say databases
+  # Public: Get information regarding the database instances.
+  #
+  # Within this method we have a few different options to get the information we
+  # require. If just an environment is passed, only the names are returned. Pass
+  # the environment param and the username, pasword, host, db cluster and
+  # instance name are returned for each database available. Passing a database
+  # name and the environment will only return that particular database.
+  #
+  # Returns database information.
+  desc "list-databases <subscription>", "See information about the databases within a subscription."
+  option :environment, :aliases => "-e"
+  option :database, :aliases => "-d"
+  def list_databases(subscription)
+    # If we have both the database name and environment, only fetch a single
+    # result.
+    if options[:database] && options[:environment]
+      database = acquia_api_call "sites/#{subscription}/envs/#{options[:environment]}/dbs/#{options[:database]}"
+      say
+      say "> Username: #{database["username"]}"
+      say "> Password: #{database["password"]}"
+      say "> Host: #{database["host"]}"
+      say "> DB cluster: #{database["db_cluster"]}"
+      say "> Instance name: #{database["instance_name"]}"
+      return
+    end
+
+    # Fetch all the databases in a specific environment.
+    if options[:environment]
+      databases = acquia_api_call "sites/#{subscription}/envs/#{options[:environment]}/dbs"
+      databases.each do |db|
+        say
+        say "#{db["name"]}"
+        say "> Username: #{db["username"]}"
+        say "> Password: #{db["password"]}"
+        say "> Host: #{db["host"]}"
+        say "> DB cluster: #{db["db_cluster"]}"
+        say "> Instance name: #{db["instance_name"]}"
+      end
+    else
+      subscription_envs = [options[:environment]]
+      databases = acquia_api_call "sites/#{subscription}/dbs"
+
+      say
+      databases.each do |db|
+        say "> #{db["name"]}"
+      end
+    end
+  end
+
+  # Public: List all backups for a database instance.
+  #
+  # Fetching all database backups for an instance is a pretty heavy call as the
+  # data isn't restricted in any way by time, id's, etc.
+  #
+  # Returns a database backup listing.
+  desc "list-database-backups <subscription> <environment> <database>", "Get all backups for a database instance."
+  def list_database_backups(subscription, environment, database)
+    backups = acquia_api_call "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups"
+    backups.each do |backup|
+      say
+      say "> ID: #{backup["id"]}"
+      say "> MD5: #{backup["checksum"]}"
+      say "> Type: #{backup["type"]}"
+      say "> Path: #{backup["path"]}"
+      say "> Link: #{backup["link"]}"
+      say "> Started: #{Time.at(backup["started"].to_i)}"
+      say "> Completed: #{Time.at(backup["completed"].to_i)}"
+    end
+  end
+
+  # Public: Create a new database instance.
+  #
+  # Returns a success message upon creation.
+  desc "add-database <subscription> <database>", "Create a new database instance."
+  def add_database(subscription, database)
+    add_database = acquia_api_call "sites/#{subscription}/dbs", "POST", :db => "#{database}"
+    success "A new database has been created." if add_database["id"]
+  end
+
+  # Public: Delete a database instance.
+  #
+  # Returns a status message based on the task completion.
+  desc "delete-database <subscription> <database>", "Remove all instances of a database."
+  def delete_database(subscription, database)
+    delete_db = acquia_api_call "sites/#{subscription}/dbs/#{database}?backup=0", "DELETE"
+    success "Database has been successfully deleted." if delete_db["id"]
+  end
+
+  # Public: Copy a database from one environment to another.
+  #
+  # Returns the status message.
+  desc "copy-database <subscription> <database> <source> <destination>", "Copy a database one from environment to another."
+  def copy_database(subscription, database, source, destination)
+    copy_database = acquia_api_call "sites/#{subscription}/dbs/#{database}/db-copy/#{source}/#{destination}", "POST"
+    success "Database #{database} has been copied from #{source} to #{destination}." if copy_database["id"]
   end
 
   # Public: Show all the available domains for a subscription.
@@ -276,12 +368,11 @@ class Acquia < Thor
   # caution!
   #
   # Returns a status message form the purge request.
-  desc "purge-domain <subscription>", ""
-  option :environment, :aliases => "-e", :required => true
+  desc "purge-domain <subscription> <environment>", "Clear the web cache of an environment or domain."
+  option :environment, :aliases => "-e"
   option :domain, :aliases => "-d"
-  def purge_domain(subscription)
+  def purge_domain(subscription, environment)
     domain = options[:domain]
-    environment = options[:environment]
 
     # If the domain is not defined, we are going to clear a whole environmnt.
     # This can have severe performance impacts on your environments. We need to
@@ -338,6 +429,15 @@ class Acquia < Thor
       say "> Name: #{user["nickname"]}"
       say "> Key: #{truncate_ssh_key user["ssh_pub_key"]}"
     end
+  end
+
+  # Public: Copy files from one environment to another.
+  #
+  # Returns a status message.
+  desc "copy-files <subscription> <source> <destination>", "Copy files from one environment to another."
+  def copy_files(subscription, source, destination)
+    file_copy = acquia_api_call "/sites/#{subscription}/files-copy/#{source}/#{target}", "POST"
+    success "File copy from #{source} to #{destination} has started." if file_copy["id"]
   end
 end
 
