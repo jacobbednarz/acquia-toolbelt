@@ -47,6 +47,7 @@ Before you can start using any commands, you need to first run `acquia login`. T
 ## FAQ
 
 **Q:** Is there support for proxies and corporate firewalls?
+
 **A:** By god yes. Proxies and corporate firewalls are the bane of my existence so there was no way this toolbelt _wasn't_ going to support it. To use a proxy, all you need to do is set your HTTPS_PROXY environment variable to the required value. Example:
 
 ```bash
