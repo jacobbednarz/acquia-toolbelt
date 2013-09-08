@@ -44,6 +44,22 @@ Commands:
 
 Before you can start using any commands, you need to first run `acquia login`. This will write your login details to a local netrc file so that you won't be prompted for login details every time a request is made. After that, the sky is the limit!
 
+## FAQ
+
+**Q:** Is there support for proxies and corporate firewalls?
+**A:** By god yes. Proxies and corporate firewalls are the bane of my existence so there was no way this toolbelt _wasn't_ going to support it. To use a proxy, all you need to do is set your HTTPS_PROXY environment variable to the required value. Example:
+
+```bash
+$ export HTTPS_PROXY="http://myproxy.url.internal:1234"
+```
+
+Then to check the value was correctly set:
+
+```bash
+$ echo $HTTPS_PROXY
+$ http://myproxy.url.internal:1234
+```
+
 ## Contributing
 
 1. Fork it
