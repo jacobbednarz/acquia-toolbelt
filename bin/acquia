@@ -5,6 +5,7 @@ require "netrc"
 require "highline/import"
 require "faraday"
 require "json"
+require "rainbow"
 
 class Acquia < Thor
   # A no_commands block is designed to show the methods that cannot be invoked
@@ -14,21 +15,21 @@ class Acquia < Thor
     #
     # Returns the coloured and formatted string.
     def success(text)
-      puts "\e[#32m#{text}\e[0m"
+      puts "#{text}".foreground(:green)
     end
 
     # Internal: Used for outputting a pretty error message.
     #
     # Returns the coloured and formatted string.
     def fail(text)
-      puts "\e[#31m#{text}\e[0m"
+      puts "#{text}".foreground(:red)
     end
 
     # Internal: Used for outputting a pretty info message.
     #
     # Returns the coloured and formatted string.
     def info(text)
-      puts "\e[#36m#{text}\e[0m"
+      puts "#{text}".foreground(:cyan)
     end
 
     # Internal: Create a request to the Acquia API.
@@ -373,6 +374,24 @@ class Acquia < Thor
         say "> #{domain["name"]}"
       end
     end
+  end
+
+  # Public: Add a domain to an environment.
+  #
+  # Returns a status message on successful addition.
+  desc "add-domain <subscription> <environment> <domain>", "Add a domain to an environment."
+  def add_domain(subscription, environment, domain)
+    add_domain = acquia_api_call "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "POST"
+    success "Domain #{domain} has been successfully added to #{environment}." if add_domain["id"]
+  end
+
+  # Public: Remove a domain from an environment.
+  #
+  # Returns a status message on successful deletion.
+  desc "delete-domain <subscription> <environment> <domain>", "Delete a domain from an environment."
+  def delete_domain(subscription, environment, domain)
+    delete_domain = acquia_api_call "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "DELETE"
+    success "Domain #{domain} has been successfully deleted from #{environment}." if delete_domain["id"]
   end
 
   # Public: Clear a web cache on a domain.

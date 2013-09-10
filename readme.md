@@ -23,9 +23,11 @@ $ acquia
 
 Commands:
   acquia add-database <subscription> <database>                          # Create a new database instance.
+  acquia add-domain <subscription> <environment> <domain>                # Add a domain to an environment.
   acquia copy-database <subscription> <database> <source> <destination>  # Copy a database one from environment to another.
   acquia copy-files <subscription> <source> <destination>                # Copy files from one environment to another.
   acquia delete-database <subscription> <database>                       # Remove all instances of a database.
+  acquia delete-domain <subscription> <environment> <domain>             # Delete a domain from an environment.
   acquia delete-svn-user <subscription> <userid>                         # Delete a SVN user.
   acquia help [COMMAND]                                                  # Describe available commands or one specific command
   acquia list-database-backups <subscription> <environment> <database>   # Get all backups for a database instance.
@@ -37,7 +39,7 @@ Commands:
   acquia list-subscriptions                                              # Find all subscriptions that you have access to.
   acquia list-svn-users <subscription>                                   # See all the SVN users on a subscription.
   acquia login                                                           # Login to your Acquia account.
-  acquia purge-domain <subscription>                                     # Clear the web cache of an environment or domain.
+  acquia purge-domain <subscription> <environment>                       # Clear the web cache of an environment or domain.
 ```
 
 ## Getting started
