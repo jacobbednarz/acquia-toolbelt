@@ -5,6 +5,7 @@ require "netrc"
 require "highline/import"
 require "faraday"
 require "json"
+require "rainbow"
 
 class Acquia < Thor
   # A no_commands block is designed to show the methods that cannot be invoked
@@ -14,21 +15,21 @@ class Acquia < Thor
     #
     # Returns the coloured and formatted string.
     def success(text)
-      puts "\e[#32m#{text}\e[0m"
+      puts "#{text}".foreground(:green)
     end
 
     # Internal: Used for outputting a pretty error message.
     #
     # Returns the coloured and formatted string.
     def fail(text)
-      puts "\e[#31m#{text}\e[0m"
+      puts "#{text}".foreground(:red)
     end
 
     # Internal: Used for outputting a pretty info message.
     #
     # Returns the coloured and formatted string.
     def info(text)
-      puts "\e[#36m#{text}\e[0m"
+      puts "#{text}".foreground(:cyan)
     end
 
     # Internal: Create a request to the Acquia API.
