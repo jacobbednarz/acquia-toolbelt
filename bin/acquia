@@ -376,6 +376,24 @@ class Acquia < Thor
     end
   end
 
+  # Public: Add a domain to an environment.
+  #
+  # Returns a status message on successful addition.
+  desc "add-domain <subscription> <environment> <domain>", "Add a domain to an environment."
+  def add_domain(subscription, environment, domain)
+    add_domain = acquia_api_call "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "POST"
+    success "Domain #{domain} has been successfully added to #{environment}." if add_domain["id"]
+  end
+
+  # Public: Remove a domain from an environment.
+  #
+  # Returns a status message on successful deletion.
+  desc "delete-domain <subscription> <environment> <domain>", "Delete a domain from an environment."
+  def delete_domain(subscription, environment, domain)
+    delete_domain = acquia_api_call "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "DELETE"
+    success "Domain #{domain} has been successfully deleted from #{environment}." if delete_domain["id"]
+  end
+
   # Public: Clear a web cache on a domain.
   #
   # Send off a DELETE request to clear the web cache for a particular domain or
