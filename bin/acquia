@@ -402,19 +402,18 @@ class Acquia < Thor
   # Send off a DELETE request to clear the web cache for a particular domain or
   # environment.
   #
-  # Note: Clearing a whole environment is pretty perfomance heavy - use with
+  # Note: Clearing a whole environment is pretty performance heavy - use with
   # caution!
   #
   # Returns a status message form the purge request.
   desc "purge-domain <subscription> <environment>", "Clear the web cache of an environment or domain."
-  option :environment, :aliases => "-e"
   option :domain, :aliases => "-d"
   def purge_domain(subscription, environment)
     domain = options[:domain]
 
-    # If the domain is not defined, we are going to clear a whole environmnt.
+    # If the domain is not defined, we are going to clear a whole environment.
     # This can have severe performance impacts on your environments. We need to
-    # be sure this is defintely what you want to do.
+    # be sure this is definitely what you want to do.
     if domain
       purge_acquia_domain(subscription, environment, domain)
     else
