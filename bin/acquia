@@ -58,6 +58,9 @@ class Acquia < Thor
       when "POST"
         response = conn.post "https://cloudapi.acquia.com/v1/#{resource}.json", data.to_json
         JSON.parse response.body
+      when "CODE-DEPLOY-POST"
+        response = conn.post "https://cloudapi.acquia.com/v1/#{resource}.json?path=#{data[:release]}"
+        JSON.parse response.body
       when "DELETE"
         response = conn.delete "https://cloudapi.acquia.com/v1/#{resource}.json"
         JSON.parse response.body
@@ -399,19 +402,18 @@ class Acquia < Thor
   # Send off a DELETE request to clear the web cache for a particular domain or
   # environment.
   #
-  # Note: Clearing a whole environment is pretty perfomance heavy - use with
+  # Note: Clearing a whole environment is pretty performance heavy - use with
   # caution!
   #
   # Returns a status message form the purge request.
   desc "purge-domain <subscription> <environment>", "Clear the web cache of an environment or domain."
-  option :environment, :aliases => "-e"
   option :domain, :aliases => "-d"
   def purge_domain(subscription, environment)
     domain = options[:domain]
 
-    # If the domain is not defined, we are going to clear a whole environmnt.
+    # If the domain is not defined, we are going to clear a whole environment.
     # This can have severe performance impacts on your environments. We need to
-    # be sure this is defintely what you want to do.
+    # be sure this is definitely what you want to do.
     if domain
       purge_acquia_domain(subscription, environment, domain)
     else
@@ -473,6 +475,21 @@ class Acquia < Thor
   def copy_files(subscription, source, destination)
     file_copy = acquia_api_call "/sites/#{subscription}/files-copy/#{source}/#{target}", "POST"
     success "File copy from #{source} to #{destination} has started." if file_copy["id"]
+  end
+
+  # Public: Deploy a VCS branch or tag to an environment.
+  #
+  # NB: Unfortunately the API endpoint for this functionality is formed a little
+  # differently to the others. It requires that the VCS path is appended to the
+  # URL compared to plain old POST request with parameters as a payload. To
+  # combat this, a pseudo request is made. It is a POST request at heart, just
+  # named differently to allow this functionality to be separated out.
+  #
+  # Returns a status message string.
+  desc "deploy-code <subscription> <environment> <release>", "Deploy a specific VCS branch or tag to an environment."
+  def deploy_code(subscription, environment, release)
+    deploy_code = acquia_api_call "sites/#{subscription}/envs/#{environment}/code-deploy", "CODE-DEPLOY-POST", :release => "#{release}"
+    success "#{release} has been deployed to #{environment}." if deploy_code["id"]
   end
 end
 
