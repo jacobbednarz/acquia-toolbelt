@@ -29,6 +29,7 @@ Commands:
   acquia delete-database <subscription> <database>                       # Remove all instances of a database.
   acquia delete-domain <subscription> <environment> <domain>             # Delete a domain from an environment.
   acquia delete-svn-user <subscription> <userid>                         # Delete a SVN user.
+  acquia deploy-code <subscription> <environment> <release>              # Deploy a specific VCS branch or tag to an environment.
   acquia help [COMMAND]                                                  # Describe available commands or one specific command
   acquia list-database-backups <subscription> <environment> <database>   # Get all backups for a database instance.
   acquia list-databases <subscription>                                   # See information about the databases within a subscription.
