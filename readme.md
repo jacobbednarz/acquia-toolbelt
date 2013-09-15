@@ -39,6 +39,7 @@ Commands:
   acquia list-ssh-users <subscription>                                   # Find out who has access and SSH keys.
   acquia list-subscriptions                                              # Find all subscriptions that you have access to.
   acquia list-svn-users <subscription>                                   # See all the SVN users on a subscription.
+  acquia list-tasks <subscription>                                       # Display tasks associated with a subscription.
   acquia login                                                           # Login to your Acquia account.
   acquia purge-domain <subscription> <environment>                       # Clear the web cache of an environment or domain.
 ```
