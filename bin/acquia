@@ -511,6 +511,40 @@ class Acquia < Thor
     deploy_code = acquia_api_call "sites/#{subscription}/envs/#{environment}/code-deploy", "CODE-DEPLOY-POST", :release => "#{release}"
     success "#{release} has been deployed to #{environment}." if deploy_code["id"]
   end
+
+  # Public: Show tasks for a subscription.
+  #
+  # Returns a listing of tasks for a subscription.
+  desc "list-tasks <subscription>", "Display tasks associated with a subscription."
+  option :count, :aliases => "-c"
+  option :queue, :aliases => "-q"
+  def list_tasks(subscription)
+    all_tasks = acquia_api_call "sites/#{subscription}/tasks"
+    tasks = []
+
+    # Fetch a single queue from the tasks list if the queue parameter is set
+    # otherwise just add all the tasks.
+    if options[:queue]
+      all_tasks.each do |task|
+        if task["queue"] == options[:queue]
+          tasks << task
+        end
+      end
+    else
+      all_tasks.each do |task|
+        tasks << task
+      end
+    end
+
+    # If there is a count to return, restrict it to that required amount.
+    if options[:count] && tasks.any?
+      tasks = tasks.last(options[:count].to_i)
+    end
+
+    tasks.each do |task|
+      output_task_item(task)
+    end
+  end
 end
 
 Acquia.start
