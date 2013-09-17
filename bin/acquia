@@ -488,6 +488,15 @@ class Acquia < Thor
     end
   end
 
+  # Public: Delete a SSH key from the subscription.
+  #
+  # Returns a status message.
+  desc "delete-ssh-user <subscription> <id>", "Delete a SSH key from the subscription."
+  def delete_ssh_user(subscription, id)
+    delete_ssh_request = acquia_api_call "sites/#{subscription}/sshkeys/#{id}", "DELETE"
+    success "SSH key #{id} has been successfully removed." if delete_ssh_request["id"]
+  end
+
   # Public: Copy files from one environment to another.
   #
   # Returns a status message.
