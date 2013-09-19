@@ -372,6 +372,15 @@ class Acquia < Thor
     success "Database #{database} has been copied from #{source} to #{destination}." if copy_database["id"]
   end
 
+  # Public: Restore a previous database backup to a site.
+  #
+  # Returns a status message.
+  desc "restore-database-backup <subscription> <environment> <database> <backup_id>", "Restore a database backup."
+  def restore_database_backup(subscription, environment, database, backup_id)
+    restore_db = acquia_api_call "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups/#{backup_id}/restore", "POST"
+    success "Database backup #{backup_id} has been restored to #{database} in #{environment}." if restore_db["id"]
+  end
+
   # Public: Show all the available domains for a subscription.
   #
   # Returns a list of the domains available.
@@ -556,4 +565,4 @@ class Acquia < Thor
   end
 end
 
-Acquia.start
+Acquia.startAcquia.start
