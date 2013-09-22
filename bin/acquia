@@ -565,4 +565,4 @@ class Acquia < Thor
   end
 end
 
-Acquia.startAcquia.start
+Acquia.start
