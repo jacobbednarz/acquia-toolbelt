@@ -1,4 +1,4 @@
-# Acquia Toolbelt
+# Acquia Toolbelt [![Gem Version](https://badge.fury.io/rb/acquia_toolbelt.png)](http://badge.fury.io/rb/acquia_toolbelt)
 
 The Acquia Toolbelt is a CLI tool for using the Acquia Cloud API. Some of the
 features include getting information around your servers, subscription,
