@@ -163,8 +163,9 @@ class Acquia < Thor
   # Returns the status of your login attempt.
   desc "login", "Login to your Acquia account."
   def login
-    user = ask "Enter your username:"
-    password = ask "Enter your password:"
+    cli = HighLine.new
+    user = cli.ask("Enter your username: ")
+    password = cli.ask("Enter your password: ") { |q| q.echo = false }
 
     # Update (or create if needed) the netrc file that will contain the user
     # authentication details.
