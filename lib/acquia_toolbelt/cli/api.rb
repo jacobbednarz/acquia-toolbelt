@@ -38,6 +38,7 @@ module AcquiaToolbelt
         # they are.
         conn = (using_proxy?) ? Faraday.new(:proxy => ENV["HTTPS_PROXY"]) : Faraday.new
         conn.basic_auth(@acquia_user, @acquia_password)
+        conn.headers["User-Agent"] = "#{AcquiaToolbelt::CLI::API::USER_AGENT}"
 
         case method
         when "GET"
