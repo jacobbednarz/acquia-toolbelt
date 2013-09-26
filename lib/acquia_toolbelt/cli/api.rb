@@ -1,5 +1,6 @@
 require "netrc"
 require "faraday"
+require "json"
 
 module AcquiaToolbelt
   class CLI
