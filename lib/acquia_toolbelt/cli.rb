@@ -15,6 +15,8 @@ module AcquiaToolbelt
     require "acquia_toolbelt/cli/site"
     require "acquia_toolbelt/cli/domain"
     require "acquia_toolbelt/cli/deploy"
+    require "acquia_toolbelt/cli/file"
+    require "acquia_toolbelt/cli/user"
 
     include Thor::Actions
 
@@ -81,5 +83,13 @@ module AcquiaToolbelt
     # Deployments.
     desc "deploy", "deploy sub commands"
     subcommand "deploy", AcquiaToolbelt::CLI::Deploy
+
+    # Files.
+    desc "files", "files sub commands"
+    subcommand "files", AcquiaToolbelt::CLI::Files
+
+    # Users.
+    desc "users", "users sub commands"
+    subcommand "users", AcquiaToolbelt::CLI::Users
   end
 end
