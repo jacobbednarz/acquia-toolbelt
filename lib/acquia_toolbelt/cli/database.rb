@@ -138,6 +138,68 @@ module AcquiaToolbelt
         ui.success "The backup for '#{database}' in #{environment} has been started." if create_backup["id"]
       end
 
+      # Public: List available database backups.
+      #
+      # Returns all database backups.
+      desc "list-backups", "List all database backups."
+      method_option :database, :type => :string, :aliases => %w(-d), :required => true,
+        :desc => "Name of the database to get the backup for."
+      def list_backups
+        # Ensure we have an environment defined.
+        if options[:environment].nil?
+          ui.say "No value provided for required options '--environment'"
+          return
+        end
+
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
+
+        database    = options[:database]
+        environment = options[:environment]
+        backups     = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups"
+        backups.each do |backup|
+          ui.say
+          ui.say "> ID: #{backup["id"]}"
+          ui.say "> MD5: #{backup["checksum"]}"
+          ui.say "> Type: #{backup["type"]}"
+          ui.say "> Path: #{backup["path"]}"
+          ui.say "> Link: #{backup["link"]}"
+          ui.say "> Started: #{Time.at(backup["started"].to_i)}"
+          ui.say "> Completed: #{Time.at(backup["completed"].to_i)}"
+        end
+      end
+
+      # Public: Restore a database backup.
+      #
+      # Returns a status message.
+      desc "restore", "Restore a database from a backup."
+      method_option :id, :type => :string, :aliases => %w(-i),
+        :desc => "Backup ID to restore."
+       method_option :database, :type => :string, :aliases => %w(-d),
+        :desc => "Name of the database to restore."
+      def restore
+        # Ensure we have an environment defined.
+        if options[:environment].nil?
+          ui.say "No value provided for required options '--environment'"
+          return
+        end
+
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
+
+        database    = options[:database]
+        environment = options[:environment]
+        database    = options[:database]
+        backup_id   = options[:id]
+        restore_db  = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups/#{backup_id}/restore", "POST"
+        ui.success "Database backup #{backup_id} has been restored to #{database} in #{environment}." if restore_db["id"]
+      end
     end
   end
 end
