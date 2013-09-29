@@ -99,6 +99,42 @@ module AcquiaToolbelt
         delete_domain = AcquiaToolbelt::CLI::API.request "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "DELETE"
         ui.success "Domain #{domain} has been successfully deleted from #{environment}." if delete_domain["id"]
       end
+
+      # Public: Purge a domains web cache.
+      #
+      # Returns a status message.
+      desc "purge", "Purge a domain's web cache."
+      method_option :domain, :type => :string, :aliases => %w(-d),
+        :desc => "URL of the domain to purge."
+      def purge
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
+
+        domain      = options[:domain]
+        environment = options[:environment]
+
+        # If the domain is not defined, we are going to clear a whole
+        # environment. This can have severe performance impacts on your
+        # environments. We need to be sure this is definitely what you want to
+        # do.
+        if domain
+          purge_domain(subscription, environment, domain)
+        else
+          all_env_clear = ui.ask "You are about to clear all domains in the #{environment} environment. Are you sure? (y/n)"
+          # Last chance to bail out.
+          if all_env_clear == "y"
+            domains = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains"
+            domains.each do |domain|
+              purge_domain("#{subscription}", "#{environment}", "#{domain["name"]}")
+            end
+          else
+            ui.info "Ok, no action has been taken."
+          end
+        end
+      end
     end
   end
 end
