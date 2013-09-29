@@ -6,15 +6,15 @@ module AcquiaToolbelt
   class CLI < AcquiaToolbelt::Thor
     require "acquia_toolbelt/cli/ui"
     require "acquia_toolbelt/cli/api"
-    require "acquia_toolbelt/auth"
-    require "acquia_toolbelt/database"
-    require "acquia_toolbelt/server"
-    require "acquia_toolbelt/ssh"
-    require "acquia_toolbelt/svn"
-    require "acquia_toolbelt/task"
-    require "acquia_toolbelt/site"
-    require "acquia_toolbelt/domain"
-    require "acquia_toolbelt/deploy"
+    require "acquia_toolbelt/cli/auth"
+    require "acquia_toolbelt/cli/database"
+    require "acquia_toolbelt/cli/server"
+    require "acquia_toolbelt/cli/ssh"
+    require "acquia_toolbelt/cli/svn"
+    require "acquia_toolbelt/cli/task"
+    require "acquia_toolbelt/cli/site"
+    require "acquia_toolbelt/cli/domain"
+    require "acquia_toolbelt/cli/deploy"
 
     include Thor::Actions
 
@@ -48,7 +48,7 @@ module AcquiaToolbelt
 
     # Authentication.
     desc "auth", "auth sub commands"
-    subcommand "auth", AcquiaToolbelt::Auth
+    subcommand "auth", AcquiaToolbelt::CLI::Auth
 
     # Databases.
     desc "databases", "db sub commands"
@@ -56,23 +56,23 @@ module AcquiaToolbelt
 
     # Servers.
     desc "servers", "server sub commands"
-    subcommand "servers", AcquiaToolbelt::Server
+    subcommand "servers", AcquiaToolbelt::CLI::Server
 
     # SSH.
     desc "ssh", "ssh sub commands"
-    subcommand "ssh", AcquiaToolbelt::SSH
+    subcommand "ssh", AcquiaToolbelt::CLI::SSH
 
     # SVN.
     desc "svn", "svn sub commands"
-    subcommand "svn", AcquiaToolbelt::SVN
+    subcommand "svn", AcquiaToolbelt::CLI::SVN
 
     # Tasks.
     desc "tasks", "tasks sub commands"
-    subcommand "tasks", AcquiaToolbelt::Task
+    subcommand "tasks", AcquiaToolbelt::CLI::Task
 
     # Sites.
     desc "sites", "sites sub commands"
-    subcommand "sites", AcquiaToolbelt::Site
+    subcommand "sites", AcquiaToolbelt::CLI::Site
 
     # Domains.
     desc "domains", "domains sub commands"
@@ -80,6 +80,6 @@ module AcquiaToolbelt
 
     # Deployments.
     desc "deploy", "deploy sub commands"
-    subcommand "deploy", AcquiaToolbelt::Deploy
+    subcommand "deploy", AcquiaToolbelt::CLI::Deploy
   end
 end
