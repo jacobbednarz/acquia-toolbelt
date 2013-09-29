@@ -1,6 +1,9 @@
 module AcquiaToolbelt
   class CLI
     class Site < AcquiaToolbelt::Thor
+      # Public: List all subscriptions the user has access to.
+      #
+      # Returns a list of subscriptions.
       desc "list", "List all subscriptions you have access to."
       def list
         sites = AcquiaToolbelt::CLI::API.request "sites"
