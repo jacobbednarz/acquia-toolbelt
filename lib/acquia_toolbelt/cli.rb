@@ -38,39 +38,47 @@ module AcquiaToolbelt
       raise
     end
 
-    # Authentication
+    # Define some options that are available to all commands.
+    class_option :subscription, :type => :string, :aliases => %w(-s),
+      :desc => "Name of a subscription you would like to target."
+    class_option :environment, :type => :string, :aliases => %w(-e),
+      :desc => "Environment to target for commands."
+    class_option :verbose, :type => :boolean, :aliases => %w(-v),
+      :desc => "Increase the verbose output from the commands."
+
+    # Authentication.
     desc "auth", "auth sub commands"
     subcommand "auth", AcquiaToolbelt::Auth
 
-    # Databases
+    # Databases.
     desc "databases", "db sub commands"
     subcommand "databases", AcquiaToolbelt::CLI::Database
 
-    # Servers
+    # Servers.
     desc "servers", "server sub commands"
     subcommand "servers", AcquiaToolbelt::Server
 
-    # SSH
+    # SSH.
     desc "ssh", "ssh sub commands"
     subcommand "ssh", AcquiaToolbelt::SSH
 
-    # SVN
+    # SVN.
     desc "svn", "svn sub commands"
     subcommand "svn", AcquiaToolbelt::SVN
 
-    # Tasks
+    # Tasks.
     desc "tasks", "tasks sub commands"
     subcommand "tasks", AcquiaToolbelt::Task
 
-    # Sites
+    # Sites.
     desc "sites", "sites sub commands"
     subcommand "sites", AcquiaToolbelt::Site
 
-    # Domains
+    # Domains.
     desc "domains", "domains sub commands"
-    subcommand "domains", AcquiaToolbelt::Domain
+    subcommand "domains", AcquiaToolbelt::CLI::Domain
 
-    # Deployments
+    # Deployments.
     desc "deploy", "deploy sub commands"
     subcommand "deploy", AcquiaToolbelt::Deploy
   end
