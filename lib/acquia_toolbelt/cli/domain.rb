@@ -40,8 +40,8 @@ module AcquiaToolbelt
         end
 
         subscription = options[:subscription] ? options[:subscription] : AcquiaToolbelt::CLI::API.default_subscription
-        environment = options[:environment]
-        domain = options[:domain]
+        environment  = options[:environment]
+        domain       = options[:domain]
 
         add_domain = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}", "POST"
         if add_domain["id"]
@@ -60,8 +60,8 @@ module AcquiaToolbelt
         :desc => "Full URL of the domain to add - No slashes or protocols required."
       def delete
         subscription = options[:subscription] ? options[:subscription] : AcquiaToolbelt::CLI::API.default_subscription
-        environment = options[:environment]
-        domain = options[:domain]
+        environment  = options[:environment]
+        domain       = options[:domain]
 
         delete_domain = AcquiaToolbelt::CLI::API.request "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "DELETE"
         ui.success "Domain #{domain} has been successfully deleted from #{environment}." if delete_domain["id"]
