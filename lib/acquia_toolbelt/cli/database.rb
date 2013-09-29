@@ -121,6 +121,23 @@ module AcquiaToolbelt
           end
         end
       end
+
+      desc "backup", "Create a new backup for a database."
+      method_option :database, :type => :string, :aliases => %w(-d), :required => true,
+        :desc => "Name of the database to backup."
+      def backup
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
+
+        database      = options[:database]
+        environment   = options[:environment]
+        create_backup = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups", "POST"
+        ui.success "The backup for '#{database}' in #{environment} has been started." if create_backup["id"]
+      end
+
     end
   end
 end
