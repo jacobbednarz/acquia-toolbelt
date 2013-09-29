@@ -10,7 +10,11 @@ module AcquiaToolbelt
           return
         end
 
-        subscription = options[:subscription] ? options[:subscription] : AcquiaToolbelt::CLI::API.default_subscription
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
         environment  = options[:environment]
         release      = options[:release]
 
