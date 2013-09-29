@@ -29,6 +29,42 @@ module AcquiaToolbelt
           end
         end
       end
+
+      desc "add", "Add a domain."
+      method_option :domain, :type => :string, :aliases => %w(-d), :required => true,
+        :desc => "Full URL of the domain to add - No slashes or protocols required."
+      def add
+        if options[:environment].nil?
+          ui.say "Environment is required."
+        end
+
+        subscription = options[:subscription] ? options[:subscription] : AcquiaToolbelt::CLI::API.default_subscription
+        environment = options[:environment]
+        domain = options[:domain]
+
+        add_domain = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}", "POST"
+        if add_domain["id"]
+          ui.success "Domain #{domain} has been successfully added to #{environment}."
+        else
+          # The Acquia API does give back an error message however it is a
+          # string inside of a JSON object we have to re-do the string into a
+          # JSON object to make it usuable.
+          error = JSON.parse add_domain["message"]
+          ui.fail "Oops, an error has occurred. Error message: #{error["message"]}"
+        end
+      end
+
+      desc "delete", "Delete a domain."
+      method_option :domain, :type => :string, :aliases => %w(-d), :required => true,
+        :desc => "Full URL of the domain to add - No slashes or protocols required."
+      def delete
+        subscription = options[:subscription] ? options[:subscription] : AcquiaToolbelt::CLI::API.default_subscription
+        environment = options[:environment]
+        domain = options[:domain]
+
+        delete_domain = AcquiaToolbelt::CLI::API.request "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "DELETE"
+        ui.success "Domain #{domain} has been successfully deleted from #{environment}." if delete_domain["id"]
+      end
     end
   end
 end
