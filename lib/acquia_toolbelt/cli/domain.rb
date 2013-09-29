@@ -16,14 +16,18 @@ module AcquiaToolbelt
           ui.success "#{domain} has been successfully purged." if purge_request["id"]
         end
       end
+
+      # Public: List all domains on a subscription.
+      #
+      # Returns all domains.
       desc "list", "List all domains."
       def list
         # Set the subscription if it has been passed through, otherwise use the
         # default.
         if options[:subscription]
-          site = options[:subscription]
+          subscription = options[:subscription]
         else
-          site = AcquiaToolbelt::CLI::API.default_subscription
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
         end
 
         # Get all the environments to loop over unless the environment is set.
@@ -35,7 +39,7 @@ module AcquiaToolbelt
         end
 
         environments.each do |environment|
-          domains = AcquiaToolbelt::CLI::API.request "sites/#{site}/envs/#{environment}/domains"
+          domains = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains"
           ui.say
           ui.say "Environment: #{environment}" unless options[:environment]
 
@@ -45,6 +49,9 @@ module AcquiaToolbelt
         end
       end
 
+      # Public: Add a domain to the subscription.
+      #
+      # Returns a status message.
       desc "add", "Add a domain."
       method_option :domain, :type => :string, :aliases => %w(-d), :required => true,
         :desc => "Full URL of the domain to add - No slashes or protocols required."
@@ -54,11 +61,15 @@ module AcquiaToolbelt
           return
         end
 
-        subscription = options[:subscription] ? options[:subscription] : AcquiaToolbelt::CLI::API.default_subscription
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
+
         environment  = options[:environment]
         domain       = options[:domain]
-
-        add_domain = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}", "POST"
+        add_domain   = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}", "POST"
         if add_domain["id"]
           ui.success "Domain #{domain} has been successfully added to #{environment}."
         else
@@ -70,14 +81,21 @@ module AcquiaToolbelt
         end
       end
 
+      # Public: Delete a domain from an environment.
+      #
+      # Returns a status message.
       desc "delete", "Delete a domain."
       method_option :domain, :type => :string, :aliases => %w(-d), :required => true,
         :desc => "Full URL of the domain to add - No slashes or protocols required."
       def delete
-        subscription = options[:subscription] ? options[:subscription] : AcquiaToolbelt::CLI::API.default_subscription
-        environment  = options[:environment]
-        domain       = options[:domain]
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
 
+        environment   = options[:environment]
+        domain        = options[:domain]
         delete_domain = AcquiaToolbelt::CLI::API.request "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "DELETE"
         ui.success "Domain #{domain} has been successfully deleted from #{environment}." if delete_domain["id"]
       end
