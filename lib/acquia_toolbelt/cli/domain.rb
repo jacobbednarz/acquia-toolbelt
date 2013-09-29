@@ -1,6 +1,21 @@
 module AcquiaToolbelt
   class CLI
     class Domain < AcquiaToolbelt::Thor
+      no_tasks do
+        # Internal: Purge a web cache for a domain.
+        #
+        # Returns a status message.
+        def purge_domain(subscription, environment, domain)
+          # Ensure all the required fields are available.
+          if subscription.nil? || environment.nil? || domain.nil?
+            ui.fail "Purge request is missing a required parameter."
+            return
+          end
+
+          purge_request = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}/cache", "DELETE"
+          ui.success "#{domain} has been successfully purged." if purge_request["id"]
+        end
+      end
       desc "list", "List all domains."
       def list
         # Set the subscription if it has been passed through, otherwise use the
