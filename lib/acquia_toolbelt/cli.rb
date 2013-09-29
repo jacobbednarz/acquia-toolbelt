@@ -17,6 +17,7 @@ module AcquiaToolbelt
     require "acquia_toolbelt/cli/deploy"
     require "acquia_toolbelt/cli/file"
     require "acquia_toolbelt/cli/user"
+    require "acquia_toolbelt/cli/environment"
 
     include Thor::Actions
 
@@ -91,5 +92,9 @@ module AcquiaToolbelt
     # Users.
     desc "users", "users sub commands"
     subcommand "users", AcquiaToolbelt::CLI::Users
+
+    # Environments.
+    desc "environments", "environments sub commands"
+    subcommand "environments", AcquiaToolbelt::CLI::Environment
   end
 end
