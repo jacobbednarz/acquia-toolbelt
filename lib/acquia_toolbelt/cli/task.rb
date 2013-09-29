@@ -22,9 +22,49 @@ module AcquiaToolbelt
         end
       end
 
-      desc "example", "example task command"
-      def example
-        puts "example task command"
+      # Public: List all tasks.
+      #
+      # Returns a task listing.
+      desc "list", "List all tasks."
+      method_option :queue, :type => :string, :aliases => %w(-q),
+        :desc => "Task queue to target."
+      method_option :count, :type => :string, :aliases => %w(-c),
+        :desc => "Limit the tasks returned."
+      def list
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
+
+        queue = options[:queue]
+        count = options[:count]
+
+        all_tasks = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/tasks"
+        tasks = []
+
+        # Fetch a single queue from the tasks list if the queue parameter is set
+        # otherwise just add all the tasks.
+        if queue
+          all_tasks.each do |task|
+            if task["queue"] == queue
+              tasks << task
+            end
+          end
+        else
+          all_tasks.each do |task|
+            tasks << task
+          end
+        end
+
+        # If there is a count to return, restrict it to that required amount.
+        if count && tasks.any?
+          tasks = tasks.last(count.to_i)
+        end
+
+        tasks.each do |task|
+          output_task_item(task)
+        end
       end
     end
   end
