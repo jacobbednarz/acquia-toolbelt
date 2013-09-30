@@ -15,10 +15,11 @@ module AcquiaToolbelt
         else
           subscription = AcquiaToolbelt::CLI::API.default_subscription
         end
-        environment  = options[:environment]
-        release      = options[:release]
+        environment = options[:environment]
+        release     = options[:release]
+        data        = { :key => "path", :value => "#{release}" }
 
-        deploy_code =  AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/code-deploy", "CODE-DEPLOY-POST", :release => "#{release}"
+        deploy_code = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/code-deploy", "QUERY-STRING-POST", data
         ui.success "#{release} has been deployed to #{environment}." if deploy_code["id"]
       end
     end

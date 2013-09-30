@@ -32,8 +32,8 @@ module AcquiaToolbelt
         when "POST"
           response = conn.post "#{endpoint_uri}/#{resource}.json", data.to_json
           JSON.parse response.body
-        when "CODE-DEPLOY-POST"
-          response = conn.post "#{endpoint_uri}/#{resource}.json?path=#{data[:release]}"
+        when "QUERY-STRING-POST"
+          response = conn.post "#{endpoint_uri}/#{resource}.json?#{data[:key]}=#{data[:value]}", data.to_json
           JSON.parse response.body
         when "DELETE"
           response = conn.delete "#{endpoint_uri}/#{resource}.json"
