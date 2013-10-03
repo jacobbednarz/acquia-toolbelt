@@ -87,6 +87,7 @@ module AcquiaToolbelt
       desc "delete", "Delete a domain."
       method_option :domain, :type => :string, :aliases => %w(-d), :required => true,
         :desc => "Full URL of the domain to add - No slashes or protocols required."
+        :desc => "Full URL of the domain to delete - No slashes or protocols required."
       def delete
         if options[:subscription]
           subscription = options[:subscription]
@@ -134,6 +135,32 @@ module AcquiaToolbelt
             ui.info "Ok, no action has been taken."
           end
         end
+      end
+
+      # Public: Move domains from one environment to another.
+      #
+      # Returns a status message.
+      desc "move", "Move a domain to another environment."
+      method_option :domains, :type => :string, :aliases => %w(-d),
+        :desc => "List of comma separated domains to move."
+      method_option :origin, :type => :string, :aliases => %w(-o),
+        :desc => "Origin environment to move the domains from."
+      method_option :target, :type => :string, :aliases => %w(-t),
+        :desc => "Target environment to move the domains to."
+      def move
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
+
+        domains = options[:domains].split(",")
+        origin  = options[:origin]
+        target  = options[:target]
+        data    = { :domains => domains }
+
+        move_domain = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/domain-move/#{origin}/#{target}", "POST", data
+        ui.success "Domain move from #{origin} to #{target} has been successfully completed." if move_domain["id"]
       end
     end
   end

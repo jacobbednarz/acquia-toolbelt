@@ -61,7 +61,7 @@ module AcquiaToolbelt
 
       # Public: Delete a database from a subscription.
       #
-      # NB: This will delete all instances of the datavbase across all
+      # NB: This will delete all instances of the database across all
       # environments.
       #
       # Returns a status message.
@@ -122,6 +122,9 @@ module AcquiaToolbelt
         end
       end
 
+      # Public: Create a database instance backup.
+      #
+      # Returns a status message.
       desc "backup", "Create a new backup for a database."
       method_option :database, :type => :string, :aliases => %w(-d), :required => true,
         :desc => "Name of the database to backup."

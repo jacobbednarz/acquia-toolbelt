@@ -1,6 +1,9 @@
 module AcquiaToolbelt
   class CLI
     class Deploy < AcquiaToolbelt::Thor
+      # Public: Deploy a VCS branch or tag.
+      #
+      # Returns a status message.
       desc "code", "Deploy a VCS branch or tag to an environment."
       method_option :release, :type => :string, :aliases => %w(-r), :required => true,
         :desc => "Name of the release to deploy to the environment."
