@@ -33,7 +33,20 @@ module AcquiaToolbelt
           end
         RUBY
       end
+      def self.help(shell, subcommand = false)
+        list = printable_commands(true, subcommand).sort!{ |a,b| a[0] <=> b[0] }
 
+        if @package_name
+          shell.say "#{@package_name} commands:"
+        else
+          shell.say
+          shell.say "Commands:"
+        end
+
+        shell.print_table(list, :indent => 2, :truncate => true)
+        shell.say
+        class_options_help(shell)
+      end
       # Define a base for the commands.
       def self.banner_base
         "acquia"
