@@ -1,6 +1,6 @@
 module AcquiaToolbelt
   class CLI
-    class Environment < AcquiaToolbelt::Thor
+    class Environments < AcquiaToolbelt::Thor
       # Public: List environments on a subscription.
       #
       # Output environment information.

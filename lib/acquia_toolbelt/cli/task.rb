@@ -1,6 +1,6 @@
 module AcquiaToolbelt
   class CLI
-    class Task < AcquiaToolbelt::Thor
+    class Tasks < AcquiaToolbelt::Thor
       no_tasks do
         # Internal: Output information for a single task item.
         def output_task_item(task)

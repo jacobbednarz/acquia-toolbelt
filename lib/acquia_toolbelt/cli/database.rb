@@ -1,6 +1,6 @@
 module AcquiaToolbelt
   class CLI
-    class Database < AcquiaToolbelt::Thor
+    class Databases < AcquiaToolbelt::Thor
       no_tasks do
         # Internal: Build the database output.
         #

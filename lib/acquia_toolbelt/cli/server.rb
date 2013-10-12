@@ -1,6 +1,6 @@
 module AcquiaToolbelt
   class CLI
-    class Server < AcquiaToolbelt::Thor
+    class Servers < AcquiaToolbelt::Thor
       desc "list", "List all servers."
       def list
         if options[:subscription]

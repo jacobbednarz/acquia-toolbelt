@@ -34,7 +34,7 @@ module AcquiaToolbelt
       ui.say("Quitting...")
       raise
     rescue SystemExit, Errno::EPIPE
-      # Don't print a message for safe exits
+      # Don't print a message for safe exits.
       raise
     rescue Exception => e
       ui.print_exception(e)
@@ -55,11 +55,11 @@ module AcquiaToolbelt
 
     # Databases.
     desc "databases", "db sub commands"
-    subcommand "databases", AcquiaToolbelt::CLI::Database
+    subcommand "databases", AcquiaToolbelt::CLI::Databases
 
     # Servers.
     desc "servers", "server sub commands"
-    subcommand "servers", AcquiaToolbelt::CLI::Server
+    subcommand "servers", AcquiaToolbelt::CLI::Servers
 
     # SSH.
     desc "ssh", "ssh sub commands"
@@ -71,15 +71,15 @@ module AcquiaToolbelt
 
     # Tasks.
     desc "tasks", "tasks sub commands"
-    subcommand "tasks", AcquiaToolbelt::CLI::Task
+    subcommand "tasks", AcquiaToolbelt::CLI::Tasks
 
     # Sites.
     desc "sites", "sites sub commands"
-    subcommand "sites", AcquiaToolbelt::CLI::Site
+    subcommand "sites", AcquiaToolbelt::CLI::Sites
 
     # Domains.
     desc "domains", "domains sub commands"
-    subcommand "domains", AcquiaToolbelt::CLI::Domain
+    subcommand "domains", AcquiaToolbelt::CLI::Domains
 
     # Deployments.
     desc "deploy", "deploy sub commands"
@@ -95,6 +95,6 @@ module AcquiaToolbelt
 
     # Environments.
     desc "environments", "environments sub commands"
-    subcommand "environments", AcquiaToolbelt::CLI::Environment
+    subcommand "environments", AcquiaToolbelt::CLI::Environments
   end
 end

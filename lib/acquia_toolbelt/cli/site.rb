@@ -1,6 +1,6 @@
 module AcquiaToolbelt
   class CLI
-    class Site < AcquiaToolbelt::Thor
+    class Sites < AcquiaToolbelt::Thor
       # Public: List all subscriptions the user has access to.
       #
       # Returns a list of subscriptions.

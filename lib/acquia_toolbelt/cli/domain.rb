@@ -1,6 +1,6 @@
 module AcquiaToolbelt
   class CLI
-    class Domain < AcquiaToolbelt::Thor
+    class Domains < AcquiaToolbelt::Thor
       no_tasks do
         # Internal: Purge a web cache for a domain.
         #
@@ -86,7 +86,6 @@ module AcquiaToolbelt
       # Returns a status message.
       desc "delete", "Delete a domain."
       method_option :domain, :type => :string, :aliases => %w(-d), :required => true,
-        :desc => "Full URL of the domain to add - No slashes or protocols required."
         :desc => "Full URL of the domain to delete - No slashes or protocols required."
       def delete
         if options[:subscription]
