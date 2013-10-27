@@ -1,3 +1,5 @@
+require "sshkey"
+
 module AcquiaToolbelt
   class CLI
     class SSH < AcquiaToolbelt::Thor
@@ -17,7 +19,7 @@ module AcquiaToolbelt
           say
           say "> ID: #{user["id"]}"
           say "> Name: #{user["nickname"]}"
-          say "> Key: #{ AcquiaToolbelt::CLI::API.truncate_ssh_key user["ssh_pub_key"]}"
+          say "> Fingerprint: #{SSHKey.fingerprint user["ssh_pub_key"]}"
         end
       end
 

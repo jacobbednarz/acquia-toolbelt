@@ -72,20 +72,6 @@ module AcquiaToolbelt
         sites.first
       end
 
-      # Internal: Truncate a SSH key to a secure and recognisable size.
-      #
-      # Displaying whole SSH keys is probably a bad idea so instead we are
-      # getting the first 30 characters and the last 100 characters of the key
-      # and separating them with an ellipis. This allows you to recognise the
-      # important parts of the key instead of the whole thing.
-      #
-      # Returns string of the SSH key.
-      def self.truncate_ssh_key(ssh_key)
-        front_part = ssh_key[0...30]
-        back_part  = ssh_key[-50, 50]
-        new_ssh_key = "#{front_part}...#{back_part}"
-      end
-
       # Internal: Build the endpoint URI.
       #
       # By building the URI here, we ensure that it is consistent throughout the
