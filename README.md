@@ -67,6 +67,12 @@ $ echo $HTTPS_PROXY
 $ http://myproxy.url.internal:1234
 ```
 
+## Running tests
+
+```
+bundle exec ruby spec_helper.rb
+```
+
 ## Contributing
 
 1. Fork it
