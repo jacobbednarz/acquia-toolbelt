@@ -10,8 +10,8 @@ module AcquiaToolbelt
           ui.say "Description: #{task["description"]}"
           ui.say "Status: #{task["state"]}"
 
-          # If the completion time is greater then 0, output it in minutes otherwise
-          # just say it was less then a minute.
+          # If the completion time is greater then 0, output it in minutes
+          # otherwise just say it was less then a minute.
           if completion_time > 0
             ui.say "Compeletion time: About #{completion_time} minutes"
           else
@@ -22,7 +22,7 @@ module AcquiaToolbelt
         end
       end
 
-      # Public: List all tasks.
+      # Public: List all tasks from the Acquia tasks queue(s).
       #
       # Returns a task listing.
       desc "list", "List all tasks."

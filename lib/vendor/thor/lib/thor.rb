@@ -198,6 +198,7 @@ class Thor
       if @package_name
         shell.say "#{@package_name} commands:"
       else
+        shell.say
         shell.say "Commands:"
       end
 
