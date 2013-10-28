@@ -14,27 +14,10 @@ module AcquiaToolbelt
   class Thor < ::Thor
     include UtilityMethods
     no_tasks do
-      def self.subcommand_help(cmd)
-        desc "#{cmd} help [COMMAND]", "Describe all subcommands or one specific subcommand."
-        class_eval <<-RUBY
-          def help(*args)
-            if args.empty?
-              ui.say "usage: #{banner_base} #{cmd} COMMAND"
-              ui.say
-              subcommands = self.class.printable_tasks.sort_by{|s| s[0] }
-              subcommands.reject!{|t| t[0] =~ /#{cmd} help$/}
-              ui.print_help(subcommands)
-              ui.say self.class.send(:class_options_help, ui)
-              ui.say "See #{banner_base} #{cmd} help COMMAND" +
-                " for more information on a specific subcommand." if args.empty?
-            else
-              super
-            end
-          end
-        RUBY
-      end
       def self.help(shell, subcommand = false)
         list = printable_commands(true, subcommand).sort!{ |a,b| a[0] <=> b[0] }
+
+        shell.say "Type 'acquia [COMMAND] help' for more details on subcommands or to show example usage."
 
         if @package_name
           shell.say "#{@package_name} commands:"
@@ -44,9 +27,21 @@ module AcquiaToolbelt
         end
 
         shell.print_table(list, :indent => 2, :truncate => true)
-        shell.say
+        shell.say unless subcommand
         class_options_help(shell)
       end
+
+      def self.printable_commands(all = true, subcommand = true)
+        (all ? all_commands : commands).map do |_, command|
+          # Don't show the hidden commands or the help commands.
+          next if command.hidden? || next if command.name.include? 'help'
+          item = []
+          item << banner(command, false, subcommand)
+          item << (command.description ? "# #{command.description.gsub(/\s+/m,' ')}" : "")
+          item
+        end.compact
+      end
+
       # Define a base for the commands.
       def self.banner_base
         "acquia"
