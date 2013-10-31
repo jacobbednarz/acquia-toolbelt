@@ -24,6 +24,13 @@ module AcquiaToolbelt
     def self.start(given_args = ARGV, config = {})
       Thor::Base.shell = AcquiaToolbelt::CLI::UI
       ui = AcquiaToolbelt::CLI::UI.new
+
+      # Use a custom symbol to separate the commands. Useful for rake styled
+      # commands.
+      if given_args[0].include? ":"
+        given_args = given_args.flat_map {|e| e.split(':')}
+      end
+
       super(given_args, {:shell => ui}.merge(config))
     rescue AcquiaToolbelt::Error
       ui.print_exception(e)
