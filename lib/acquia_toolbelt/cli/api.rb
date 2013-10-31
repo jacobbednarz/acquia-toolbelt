@@ -17,6 +17,15 @@ module AcquiaToolbelt
       # Retuns JSON object from the response body.
       def self.request(resource, method = "GET", data = {})
         n = Netrc.read
+
+        # Make sure there is an entry for the Acquia API before generating the
+        # requests.
+        if n["cloudapi.acquia.com"].nil?
+          puts "No entry for cloudapi.acquia.com within your netrc file."
+          puts "You can login/reset your user credentials by running 'acquia auth:login'"
+          return
+        end
+
         @acquia_user, @acquia_password = n["cloudapi.acquia.com"]
 
         # Check if the user is behind a proxy and add the proxy settings if
