@@ -6,3 +6,4 @@ begin
   AcquiaToolbelt::CLI.start
 rescue
   exit(1)
+end
