@@ -322,6 +322,8 @@ class Thor
 
     # The method responsible for dispatching given the args.
     def dispatch(meth, given_args, given_opts, config) #:nodoc:
+      # Use a custom symbol to separate the commands. Useful for rake styled
+      # commands.
       # There is an edge case when dispatching from a subcommand.
       # A problem occurs invoking the default command. This case occurs
       # when arguments are passed and a default command is defined, and
