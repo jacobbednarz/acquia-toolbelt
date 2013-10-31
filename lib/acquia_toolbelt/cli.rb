@@ -56,47 +56,47 @@ module AcquiaToolbelt
       :desc => "Increase the verbose output from the commands."
 
     # Authentication.
-    desc "auth", "auth sub commands"
+    desc "auth", ""
     subcommand "auth", AcquiaToolbelt::CLI::Auth
 
     # Databases.
-    desc "databases", "db sub commands"
+    desc "databases", ""
     subcommand "databases", AcquiaToolbelt::CLI::Databases
 
     # Servers.
-    desc "servers", "server sub commands"
+    desc "servers", ""
     subcommand "servers", AcquiaToolbelt::CLI::Servers
 
     # SSH.
-    desc "ssh", "ssh sub commands"
+    desc "ssh", ""
     subcommand "ssh", AcquiaToolbelt::CLI::SSH
 
     # SVN.
-    desc "svn", "svn sub commands"
+    desc "svn", ""
     subcommand "svn", AcquiaToolbelt::CLI::SVN
 
     # Tasks.
-    desc "tasks", "tasks sub commands"
+    desc "tasks", ""
     subcommand "tasks", AcquiaToolbelt::CLI::Tasks
 
     # Sites.
-    desc "sites", "sites sub commands"
+    desc "sites", ""
     subcommand "sites", AcquiaToolbelt::CLI::Sites
 
     # Domains.
-    desc "domains", "domains sub commands"
+    desc "domains", ""
     subcommand "domains", AcquiaToolbelt::CLI::Domains
 
     # Deployments.
-    desc "deploy", "deploy sub commands"
+    desc "deploy", ""
     subcommand "deploy", AcquiaToolbelt::CLI::Deploy
 
     # Files.
-    desc "files", "files sub commands"
+    desc "files", ""
     subcommand "files", AcquiaToolbelt::CLI::Files
 
     # Environments.
-    desc "environments", "environments sub commands"
+    desc "environments", ""
     subcommand "environments", AcquiaToolbelt::CLI::Environments
   end
 end

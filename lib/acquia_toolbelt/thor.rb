@@ -37,7 +37,7 @@ module AcquiaToolbelt
           next if command.hidden? || next if command.name.include? 'help'
           item = []
           item << banner(command, false, subcommand)
-          item << (command.description ? "# #{command.description.gsub(/\s+/m,' ')}" : "")
+          item << (command.description ? "# #{command.description.gsub(/\s+/m,' ')}" : "") unless command.description.empty?
           item
         end.compact
       end
@@ -56,7 +56,7 @@ module AcquiaToolbelt
                             end
 
         task = (task_help ? task.formatted_usage(self, false, subcommand) : task.name)
-        [banner_base, subcommand_banner, task].compact.join(" ")
+        banner_base + " " + [subcommand_banner, task].compact.join(":")
       end
 
       def self.handle_no_task_error(task)
