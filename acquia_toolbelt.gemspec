@@ -24,7 +24,9 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "faraday", "0.8.8"
   spec.add_runtime_dependency "json", "1.8.0"
   spec.add_runtime_dependency "rainbow", "1.1.4"
+  spec.add_runtime_dependency "sshkey", "1.6.0"
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
+  spec.add_development_dependency "minitest"
 end
