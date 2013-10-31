@@ -324,6 +324,10 @@ class Thor
     def dispatch(meth, given_args, given_opts, config) #:nodoc:
       # Use a custom symbol to separate the commands. Useful for rake styled
       # commands.
+      if given_args[0].include? ":"
+        given_args = given_args.flat_map {|e| e.split(':')}
+      end
+
       # There is an edge case when dispatching from a subcommand.
       # A problem occurs invoking the default command. This case occurs
       # when arguments are passed and a default command is defined, and
