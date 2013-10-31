@@ -1,4 +1,4 @@
-require 'netrc'
+require "netrc"
 
 describe "when reading netrc values" do
   it "should be able to read login values" do
