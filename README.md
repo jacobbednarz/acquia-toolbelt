@@ -70,7 +70,7 @@ Before you can start using any commands, you need to first run `acquia auth:logi
 
 ## FAQ
 
-**Q: Is there support for proxies and corporate firewalls? **
+**Q: Is there support for proxies and corporate firewalls?**
 
 **A:** By god yes. Proxies and corporate firewalls are the bane of my existence so there was no way this toolbelt _wasn't_ going to support it. To use a proxy, all you need to do is set your HTTPS_PROXY environment variable to the required value. Example:
 
@@ -85,7 +85,7 @@ $ echo $HTTPS_PROXY
 $ http://myproxy.url.internal:1234
 ```
 
-**Q: Is there somewhere I can see all the commands with required parameters? **
+**Q: Is there somewhere I can see all the commands with required parameters?**
 
 **A:** Yep. Check out the [commands listing](https://github.com/jacobbednarz/acquia-toolbelt/wiki/Commands) in the [wiki](https://github.com/jacobbednarz/acquia-toolbelt/wiki).
 
