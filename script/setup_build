@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+# Create the temporary netrc with some mocked data.
+`touch ~/.netrc`
+`chmod 0600 ~/.netrc`
+`echo "# This entry was added for connecting to the Acquia Cloud API\nmachine cloudapi.acquia.com\n  login me@acquia.com\n  password t0ps3cret" > ~/.netrc`
