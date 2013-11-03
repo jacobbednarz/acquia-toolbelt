@@ -6,4 +6,4 @@ rvm:
 script: "bundle exec ruby ./spec_helper.rb"
 before_install: 
   - touch ~/.netrc
-  - "# This entry was added for connecting to the Acquia Cloud API\nmachine cloudapi.acquia.com\n  login me@acquia.com\n  password t0ps3cret" > ~/.netrc
+  - echo "# This entry was added for connecting to the Acquia Cloud API\nmachine cloudapi.acquia.com\n  login me@acquia.com\n  password t0ps3cret" > ~/.netrc
