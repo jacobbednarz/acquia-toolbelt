@@ -5,7 +5,7 @@ PATH
       faraday (= 0.8.8)
       highline (= 1.6.19)
       json (= 1.8.0)
-      multi_json
+      multi_json (= 1.8.2)
       netrc (= 0.7.7)
       rainbow (= 1.1.4)
       sshkey (= 1.6.0)
@@ -41,7 +41,7 @@ PLATFORMS
 DEPENDENCIES
   acquia_toolbelt!
   bundler (~> 1.3)
-  minitest
+  minitest (= 5.0.8)
   rake
-  vcr
-  webmock
+  vcr (= 2.7.0)
+  webmock (= 1.15.2)
