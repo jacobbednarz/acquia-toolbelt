@@ -12,10 +12,12 @@ Installation is available (and recommended) via Ruby Gems.
 $ gem install acquia_toolbelt
 ```
 
-Once installed, the toolbelt is accessible via invoking `acquia` within the command line.
+Once installed, the toolbelt is accessible via invoking `acquia` within the
+command line.
 
 ## Usage
-You can see all available commands by running `acquia help`. Additonally, more information on each command is available via `acquia [COMMAND] help`.
+You can see all available commands by running `acquia help`. Additonally, more
+information on each command is available via `acquia [COMMAND] help`.
 
 ```
 $ acquia help
@@ -43,7 +45,7 @@ Options:
 
 #### Example commands
 
-Without parameters
+Without parameters:
 
 ```
 $ acquia database:list
@@ -52,7 +54,7 @@ $ acquia database:list
 > mydb2
 ```
 
-With parameters
+With parameters:
 
 ```
 $ acquia database:list -e dev -d mydb
@@ -66,13 +68,19 @@ $ acquia database:list -e dev -d mydb
 
 ## Getting started
 
-Before you can start using any commands, you need to first run `acquia auth:login`. This will write your login details to a local netrc file so that you won't be prompted for login details every time a request is made. After that, the sky is the limit!
+Before you can start using any commands, you need to first run
+`acquia auth:login`. This will write your login details to a local netrc file so
+that you won't be prompted for login details every time a request is made. After
+that, the sky is the limit!
 
 ## FAQ
 
 **Q: Is there support for proxies and corporate firewalls?**
 
-**A:** By god yes. Proxies and corporate firewalls are the bane of my existence so there was no way this toolbelt _wasn't_ going to support it. To use a proxy, all you need to do is set your HTTPS_PROXY environment variable to the required value. Example:
+**A:** By god yes. Proxies and corporate firewalls are the bane of my existence
+so there was no way this toolbelt _wasn't_ going to support it. To use a proxy,
+all you need to do is set your HTTPS_PROXY environment variable to the required
+value. Example:
 
 ```bash
 $ export HTTPS_PROXY="http://myproxy.url.internal:1234"
@@ -87,18 +95,53 @@ $ http://myproxy.url.internal:1234
 
 **Q: Is there somewhere I can see all the commands with required parameters?**
 
-**A:** Yep. Check out the [commands listing](https://github.com/jacobbednarz/acquia-toolbelt/wiki/Commands) in the [wiki](https://github.com/jacobbednarz/acquia-toolbelt/wiki).
+**A:** Yep. Check out the
+[commands listing](https://github.com/jacobbednarz/acquia-toolbelt/wiki/Commands)
+in the [wiki](https://github.com/jacobbednarz/acquia-toolbelt/wiki).
 
-## Running tests
+## Hacking on the Acquia Toolbelt
+
+The Acquia Toolbelt uses [VCR](https://github.com/vcr/vcr) for recording and
+replaying API fixtures during test runs - doing this allows the tests to stay
+fast and easy for anyone to run.
+
+Authenticated requests are currently using the user credentials from the netrc
+file on your local system. It is a good idea to have this setup first (simply
+by running `acquia auth:login`) as if you are recording new cassettes you will
+need to be able to make actual requests. Don't worry about your user credentials
+being stored in the fixtures as they are removed during the request and they
+will appear as ACQUIA_USERNAME and ACQUIA_PASSWORD in the requests
+respectively.
+
+Since the cassettes are periodically refreshed to match changes to the API,
+remember the keep the following in mind when making cassettes.
+
+* **Specs should be idempotent.** The HTTP calls made during a spec should be 
+  able to be run over and over. This means deleting a known resource prior to 
+  creating it if the name has to be unique.
+* **Specs should be able to be run in random order.** If a spec depends on 
+  another resource as a fixture, make sure that's created in the scope of the 
+  spec and not depend on a previous spec to create the data needed.
+* **Do not depend on authenticated user info.** Instead of asserting actual 
+  values in resources, try to assert the existence of a key or that a response 
+  is an Array. We're testing the client, not the API.
+
+### Running and writing new tests
+
+The testing is mainly [MiniTest](https://github.com/seattlerb/minitest). To run 
+the test suite, execute the following in the root of the repository:
 
 ```
 bundle exec ruby spec_helper.rb
 ```
 
-## Contributing
+### Supported versions
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+This library aims to support and is [tested against](https://travis-ci.org/jacobbednarz/acquia-toolbelt) the following Ruby implementations:
+
+* Ruby 1.9.2
+* Ruby 1.9.3
+* Ruby 2.0.0
+
+If you would like support for other implementations or versions, please open an
+issue and it can be looked into.
