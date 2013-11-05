@@ -1,12 +1,12 @@
-describe "databases" do
+describe "svn" do
   before do
     n = Netrc.read
     @acquia_username, @acquia_password = n["cloudapi.acquia.com"]
   end
 
   it "response should be an array" do
-    VCR.use_cassette("database/response_is_an_array") do
-      uri = URI("https://cloudapi.acquia.com/v1/sites/devcloud:acquiatoolbeltdev/dbs.json")
+    VCR.use_cassette("svn/response_is_an_array") do
+      uri = URI("https://cloudapi.acquia.com/v1/sites/devcloud:acquiatoolbeltdev/svnusers.json")
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
