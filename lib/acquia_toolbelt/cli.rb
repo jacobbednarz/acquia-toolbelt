@@ -27,7 +27,8 @@ module AcquiaToolbelt
       # Use a custom symbol to separate the commands. Useful for rake styled
       # commands.
       if given_args[0].include? ":"
-        given_args = given_args.flat_map {|e| e.split(':')}
+        commands = given_args.shift.split(":")
+        given_args = given_args.unshift(commands).flatten
       end
 
       super(given_args, {:shell => ui}.merge(config))
