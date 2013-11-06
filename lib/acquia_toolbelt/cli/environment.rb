@@ -33,6 +33,39 @@ module AcquiaToolbelt
           ui.say "> Default domain: #{env_info["default_domain"]}"
         end
       end
+
+      # Public: Toggle whether live development is enabled on an environment.
+      #
+      # Valid actions are enable or disable.
+      #
+      # Returns a status message.
+      desc "live-development", "Enable/disbale live development on an environment."
+      method_option :action, :type => :string, :aliases => %w(-a), :required => true,
+        :desc => "Status of live development (enable/disable).",
+        :enum => ["enable", "disable"]
+      def live_development
+        if options[:environment].nil?
+          ui.say "No value provided for required options '--environment'"
+          return
+        end
+
+        if options[:subscription]
+          subscription = options[:subscription]
+        else
+          subscription = AcquiaToolbelt::CLI::API.default_subscription
+        end
+
+        action      = options[:action]
+        environment = options[:environment]
+
+        live_development_set = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/livedev/#{action}", "POST"
+
+        if live_development_set["id"]
+          ui.success "Live development has been successfully #{action}d on #{environment}."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(live_development_set)
+        end
+      end
     end
   end
 end
