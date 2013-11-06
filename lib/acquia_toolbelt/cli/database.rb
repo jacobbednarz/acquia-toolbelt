@@ -32,7 +32,14 @@ module AcquiaToolbelt
 
         database     = options[:database]
         add_database = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs", "POST", :db => "#{database}"
-        ui.success "Database '#{database}' has been successfully created." if add_database["id"]
+
+        puts "#{add_database}"
+
+        if add_database["id"]
+          ui.success "Database '#{database}' has been successfully created."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(add_database)
+        end
       end
 
       # Public: Copy a database from one environment to another.
@@ -56,7 +63,12 @@ module AcquiaToolbelt
         origin        = options[:origin]
         target        = options[:target]
         copy_database = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs/#{database}/db-copy/#{origin}/#{target}", "POST"
-        ui.success "Database '#{database}' has been copied from #{origin} to #{target}." if copy_database["id"]
+
+        if copy_database["id"]
+          ui.success "Database '#{database}' has been copied from #{origin} to #{target}."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(copy_database)
+        end
       end
 
       # Public: Delete a database from a subscription.
@@ -77,7 +89,12 @@ module AcquiaToolbelt
 
         database  = options[:database]
         delete_db = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs/#{database}", "DELETE"
-        ui.success "Database '#{database}' has been successfully deleted." if delete_db["id"]
+
+        if delete_db["id"]
+          ui.success "Database '#{database}' has been successfully deleted."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(delete_database)
+        end
       end
 
       # Public: List all databases available within a subscription.
@@ -138,7 +155,11 @@ module AcquiaToolbelt
         database      = options[:database]
         environment   = options[:environment]
         create_backup = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups", "POST"
-        ui.success "The backup for '#{database}' in #{environment} has been started." if create_backup["id"]
+        if create_backup["id"]
+          ui.success "The backup for '#{database}' in #{environment} has been started."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(create_backup)
+        end
       end
 
       # Public: List available database backups.
@@ -201,7 +222,12 @@ module AcquiaToolbelt
         database    = options[:database]
         backup_id   = options[:id]
         restore_db  = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups/#{backup_id}/restore", "POST"
-        ui.success "Database backup #{backup_id} has been restored to #{database} in #{environment}." if restore_db["id"]
+
+        if restore_db["id"]
+          ui.success "Database backup #{backup_id} has been restored to '#{database}' in #{environment}."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(restore_db)
+        end
       end
     end
   end

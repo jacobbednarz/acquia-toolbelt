@@ -101,6 +101,16 @@ module AcquiaToolbelt
       def self.using_proxy?
         ENV["HTTPS_PROXY"] ? true : false
       end
+
+      # Internal: Show the error message from the response.
+      #
+      # If the API request fails, this will get the "message" and allow that to
+      # be outputted to the end user to be a little more helpful.
+      #
+      # Returns string of the message.
+      def self.display_error(response)
+        "Oops, an error occurred!\n\nReason returned from the API: #{response["message"]}"
+      end
     end
   end
 end
