@@ -39,7 +39,12 @@ module AcquiaToolbelt
         id = options[:id]
 
         delete_ssh_request = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/sshkeys/#{id}", "DELETE"
-        ui.success "SSH key #{id} has been successfully deleted." if delete_ssh_request["id"]
+
+        if delete_ssh_request["id"]
+          ui.success "SSH key #{id} has been successfully deleted."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(delete_ssh_key)
+        end
       end
 
       # Public: Add a SSH key to a subscription.
@@ -62,7 +67,11 @@ module AcquiaToolbelt
         data     = { :key => "nickname", :value => "#{nickname}", :ssh_pub_key => "#{key}" }
 
         add_ssh_key = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/sshkeys", "QUERY-STRING-POST", data
-        ui.success "SSH key '#{nickname}' has been successfully added." if add_ssh_key["id"]
+        if add_ssh_key["id"]
+          ui.success "SSH key '#{nickname}' has been successfully added."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(add_ssh_key)
+        end
       end
     end
   end

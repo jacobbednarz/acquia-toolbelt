@@ -13,7 +13,12 @@ module AcquiaToolbelt
           end
 
           purge_request = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}/cache", "DELETE"
-          ui.success "#{domain} has been successfully purged." if purge_request["id"]
+
+          if purge_request["id"]
+            ui.success "#{domain} has been successfully purged."
+          else
+            ui.fail AcquiaToolbelt::CLI::API.display_error(purge_request)
+          end
         end
       end
 
@@ -67,17 +72,14 @@ module AcquiaToolbelt
           subscription = AcquiaToolbelt::CLI::API.default_subscription
         end
 
-        environment  = options[:environment]
-        domain       = options[:domain]
-        add_domain   = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}", "POST"
+        environment = options[:environment]
+        domain      = options[:domain]
+        add_domain  = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}", "POST"
+
         if add_domain["id"]
           ui.success "Domain #{domain} has been successfully added to #{environment}."
         else
-          # The Acquia API does give back an error message however it is a
-          # string inside of a JSON object so we have to re-do the string into a
-          # JSON object to make it usuable.
-          error = JSON.parse add_domain["message"]
-          ui.fail "Oops, an error has occurred. Error message: #{error["message"]}"
+          ui.fail AcquiaToolbelt::CLI::API.display_error(add_domain)
         end
       end
 
@@ -97,7 +99,12 @@ module AcquiaToolbelt
         environment   = options[:environment]
         domain        = options[:domain]
         delete_domain = AcquiaToolbelt::CLI::API.request "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "DELETE"
-        ui.success "Domain #{domain} has been successfully deleted from #{environment}." if delete_domain["id"]
+
+        if delete_domain["id"]
+          ui.success "Domain #{domain} has been successfully deleted from #{environment}."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(delete_domain)
+        end
       end
 
       # Public: Purge a domains web cache.
@@ -159,7 +166,11 @@ module AcquiaToolbelt
         data    = { :domains => domains }
 
         move_domain = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/domain-move/#{origin}/#{target}", "POST", data
-        ui.success "Domain move from #{origin} to #{target} has been successfully completed." if move_domain["id"]
+        if move_domain["id"]
+          ui.success "Domain move from #{origin} to #{target} has been successfully completed."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(move_domain)
+        end
       end
     end
   end

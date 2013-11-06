@@ -39,7 +39,11 @@ module AcquiaToolbelt
         password = options[:password]
 
         add_svn_user = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/svnusers/#{username}", "POST", :password => "#{password}"
-        ui.success "User '#{username}' has been successfully created." if add_svn_user["id"]
+        if add_svn_user["id"]
+          ui.success "User '#{username}' has been successfully created."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(add_svn_user)
+        end
       end
 
       # Public: Delete a SVN user.
@@ -58,7 +62,11 @@ module AcquiaToolbelt
         userid = options[:id]
 
         svn_user_removal = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/svnusers/#{userid}", "DELETE"
-        ui.success "#{userid} has been removed from the SVN users." if svn_user_removal["id"]
+        if svn_user_removal["id"]
+          ui.success "#{userid} has been removed from the SVN users."
+        else
+          ui.fail AcquiaToolbelt::CLI::API.display_error(svn_user_removal)
+        end
       end
     end
   end
