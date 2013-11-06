@@ -5,13 +5,13 @@ require "acquia_toolbelt/cli"
 module AcquiaToolbelt
   class CLI
     class Auth < AcquiaToolbelt::Thor
-      desc "login", "Login to your Acquia account."
       # Public: Login to an Acquia account.
       #
       # Save the login details in a netrc file for use for all authenticated
       # requests.
       #
       # Returns a status message.
+      desc "login", "Login to your Acquia account."
       def login
         cli = HighLine.new
         user = cli.ask("Enter your username: ")
