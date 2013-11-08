@@ -3,5 +3,5 @@ rvm:
   - "1.9.2"
   - "1.9.3"
   - "2.0.0"
-script: "rspec spec"
+script: "bundle exec rspec spec"
 before_install: "ruby ./script/setup_build"
