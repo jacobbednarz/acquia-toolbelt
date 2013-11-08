@@ -1,21 +1,19 @@
+require_relative "./helper"
+
 describe "sites" do
-  before do
-    n = Netrc.read
-    @acquia_username, @acquia_password = n["cloudapi.acquia.com"]
+  it "response should be an array" do
+    VCR.use_cassette("sites/all_sites") do
+      response = request "sites"
+      expect(response.code).to eq "200"
+      JSON.parse(response.body).should be_an_instance_of Array
+    end
   end
 
-  it "response should be an array" do
-    VCR.use_cassette("sites/response_is_an_array") do
-      uri = URI("https://cloudapi.acquia.com/v1/sites.json")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request.basic_auth @acquia_username, @acquia_password
-
-      response = http.request(request)
-      assert_instance_of Array, JSON.parse(response.body)
+  it "should contain required fields" do
+    VCR.use_cassette("sites/all_sites") do
+      response = request "sites"
+      expect(response.code).to eq "200"
+      response.body.should include "devcloud:acquiatoolbeltdev"
     end
   end
 end
