@@ -116,24 +116,26 @@ respectively.
 Since the cassettes are periodically refreshed to match changes to the API,
 remember the keep the following in mind when making cassettes.
 
-* **Specs should be idempotent.** The HTTP calls made during a spec should be 
-  able to be run over and over. This means deleting a known resource prior to 
+* **Specs should be idempotent.** The HTTP calls made during a spec should be
+  able to be run over and over. This means deleting a known resource prior to
   creating it if the name has to be unique.
-* **Specs should be able to be run in random order.** If a spec depends on 
-  another resource as a fixture, make sure that's created in the scope of the 
+* **Specs should be able to be run in random order.** If a spec depends on
+  another resource as a fixture, make sure that's created in the scope of the
   spec and not depend on a previous spec to create the data needed.
-* **Do not depend on authenticated user info.** Instead of asserting actual 
-  values in resources, try to assert the existence of a key or that a response 
+* **Do not depend on authenticated user info.** Instead of asserting actual
+  values in resources, try to assert the existence of a key or that a response
   is an Array. We're testing the client, not the API.
 
 ### Running and writing new tests
 
-The testing is mainly [MiniTest](https://github.com/seattlerb/minitest). To run 
-the test suite, execute the following in the root of the repository:
+The testing is mainly done via [RSpec](https://github.com/rspec/rspec). To run
+the test suite, execute the `script/test` script in the root of the repository:
 
+```bash
+$ script/test
 ```
-bundle exec ruby spec_helper.rb
-```
+
+This will ensure all dependencies are installed and kick off the test suite.
 
 ### Supported versions
 

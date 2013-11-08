@@ -1,21 +1,51 @@
+require_relative "./helper"
+
 describe "servers" do
-  before do
-    n = Netrc.read
-    @acquia_username, @acquia_password = n["cloudapi.acquia.com"]
+  it "response should be an array" do
+    VCR.use_cassette("servers/all_dev_servers") do
+      response = request "sites/devcloud:acquiatoolbeltdev/envs/dev/servers"
+      expect(response.code).to eq "200"
+      JSON.parse(response.body).should be_an_instance_of Array
+    end
   end
 
-  it "response should be an array" do
-    VCR.use_cassette("servers/response_is_an_array") do
-      uri = URI("https://cloudapi.acquia.com/v1/sites/devcloud:acquiatoolbeltdev/envs/dev/servers.json")
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  it "should return basic server fields" do
+    VCR.use_cassette("servers/all_dev_servers") do
+      response = request "sites/devcloud:acquiatoolbeltdev/envs/dev/servers"
+      expect(response.code).to eq "200"
+      response.body.should include("ec2_availability_zone", "name", "fqdn", "ami_type", "ec2_region", "services")
+    end
+  end
 
-      request = Net::HTTP::Get.new(uri.request_uri)
-      request.basic_auth @acquia_username, @acquia_password
+  it "should return varnish instance fields" do
+    VCR.use_cassette("servers/all_dev_servers") do
+      response = request "sites/devcloud:acquiatoolbeltdev/envs/dev/servers"
+      expect(response.code).to eq "200"
+      response.body.should include("varnish", "status")
+    end
+  end
 
-      response = http.request(request)
-      assert_instance_of Array, JSON.parse(response.body)
+  it "should return web server fields" do
+    VCR.use_cassette("servers/all_dev_servers") do
+      response = request "sites/devcloud:acquiatoolbeltdev/envs/dev/servers"
+      expect(response.code).to eq "200"
+      response.body.should include("web", "status", "env_status", "php_max_procs")
+    end
+  end
+
+  it "should return database instance fields" do
+    VCR.use_cassette("servers/all_dev_servers") do
+      response = request "sites/devcloud:acquiatoolbeltdev/envs/dev/servers"
+      expect(response.code).to eq "200"
+      response.body.should include "database"
+    end
+  end
+
+  it "should return vcs instance fields" do
+    VCR.use_cassette("servers/all_dev_servers") do
+      response = request "sites/devcloud:acquiatoolbeltdev/envs/dev/servers"
+      expect(response.code).to eq "200"
+      response.body.should include "vcs", "vcs_url", "vcs_type", "vcs_path"
     end
   end
 end
