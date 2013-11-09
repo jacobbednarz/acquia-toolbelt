@@ -2,3 +2,6 @@
 *.tmp
 *.swp
 *.gem
+
+# Ignore coverage directory.
+coverage/*
