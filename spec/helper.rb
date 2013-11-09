@@ -6,6 +6,9 @@ require "cgi"
 require "vcr"
 require "netrc"
 require "webmock"
+require "coveralls"
+
+Coveralls.wear!
 
 n = Netrc.read
 @acquia_username, @acquia_password = n["cloudapi.acquia.com"]
