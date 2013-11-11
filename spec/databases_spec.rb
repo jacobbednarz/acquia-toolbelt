@@ -46,7 +46,7 @@ describe "databases" do
     VCR.use_cassette("databases/delete_a_database") do
       # Create a database to delete.
       database = "test-suite-db-7b9bf6"
-      create_db = AcquiaToolbelt::CLI::API.request "sites/devcloud:acquiatoolbeltdev/dbs", "POST", {:db => "#{database}"}
+      AcquiaToolbelt::CLI::API.request "sites/devcloud:acquiatoolbeltdev/dbs", "POST", {:db => "#{database}"}
 
       response = AcquiaToolbelt::CLI::API.request "sites/devcloud:acquiatoolbeltdev/dbs/#{database}", "DELETE", {}, false
       (response.status).should eq 200
