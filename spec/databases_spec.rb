@@ -44,7 +44,7 @@ describe "databases" do
 
   it "should delete a database from the dev environment" do
     VCR.use_cassette("databases/delete_a_database") do
-      database = database = "test-suite-db-#{8.times.map { [*'0'..'9', *'a'..'z', *'A'..'Z'].sample }.join}"
+      database = "test-suite-db-#{8.times.map { [*'0'..'9', *'a'..'z', *'A'..'Z'].sample }.join}"
 
       # Create a database to delete.
       AcquiaToolbelt::CLI::API.request "sites/devcloud:acquiatoolbeltdev/dbs", "POST", {:db => "#{database}"}
