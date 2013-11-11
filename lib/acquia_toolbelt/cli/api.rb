@@ -1,7 +1,7 @@
 require "netrc"
 require "faraday"
 require "json"
-
+require "acquia_toolbelt/version"
 module AcquiaToolbelt
   class CLI
     class API
@@ -14,8 +14,17 @@ module AcquiaToolbelt
       # Build a HTTP request to connect to the Acquia API and handle the JSON
       # response accordingly.
       #
+      # resource      - The resource URI that is after the version in the API
+      #                 URI.
+      # method        - HTTP verb to use on the request.
+      # data          - Data to send to the endpoint.
+      # parse_request - Whether to JSON parse the body before returning or just
+      #                 return the whole request object. The whole request is
+      #                 returned during tests whereas only the body is required
+      #                 for the application.
+      #
       # Retuns JSON object from the response body.
-      def self.request(resource, method = "GET", data = {})
+      def self.request(resource, method = "GET", data = {}, parse_request = true)
         n = Netrc.read
 
         # Make sure there is an entry for the Acquia API before generating the
@@ -40,16 +49,39 @@ module AcquiaToolbelt
         case method
         when "GET"
           response = conn.get "#{endpoint_uri}/#{resource}.json"
-          JSON.parse response.body
+
+          if parse_request == true
+            JSON.parse(response.body)
+          else
+            response
+          end
         when "POST"
           response = conn.post "#{endpoint_uri}/#{resource}.json", data.to_json
           JSON.parse response.body
+
+          if parse_request == true
+            JSON.parse(response.body)
+          else
+            response
+          end
         when "QUERY-STRING-POST"
           response = conn.post "#{endpoint_uri}/#{resource}.json?#{data[:key]}=#{data[:value]}", data.to_json
           JSON.parse response.body
+
+          if parse_request == true
+            JSON.parse(response.body)
+          else
+            response
+          end
         when "DELETE"
           response = conn.delete "#{endpoint_uri}/#{resource}.json"
           JSON.parse response.body
+
+          if parse_request == true
+            JSON.parse(response.body)
+          else
+            response
+          end
         else
         end
       end

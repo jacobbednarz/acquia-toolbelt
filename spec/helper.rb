@@ -6,6 +6,7 @@ require "cgi"
 require "vcr"
 require "netrc"
 require "webmock"
+require "acquia_toolbelt/cli/api"
 
 n = Netrc.read
 @acquia_username, @acquia_password = n["cloudapi.acquia.com"]
@@ -39,18 +40,4 @@ end
 # authentication.
 def is_netrc?
   true
-end
-
-def request(resource)
-  setup_authentication
-
-  uri = URI("https://cloudapi.acquia.com/v1/#{resource}.json")
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = true
-  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-  request = Net::HTTP::Get.new(uri.request_uri)
-  request.basic_auth @acquia_username, @acquia_password
-
-  response = http.request(request)
 end

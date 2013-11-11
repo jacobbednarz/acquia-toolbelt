@@ -2,3 +2,5 @@
 *.tmp
 *.swp
 *.gem
+
+coverage/*
