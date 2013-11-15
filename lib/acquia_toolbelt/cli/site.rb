@@ -11,16 +11,16 @@ module AcquiaToolbelt
         sites.each do |site|
           ui.say
           # Get the individual subscription information.
-          site = AcquiaToolbelt::CLI::API.request "sites/#{site}"
+          site_data = AcquiaToolbelt::CLI::API.request "sites/#{site}"
 
-          ui.say "#{site["title"]}"
-          ui.say "> Username: #{site["unix_username"]}"
-          ui.say "> Subscription: #{site["name"]}"
+          ui.say "#{site_data["title"]}"
+          ui.say "> Username: #{site_data["unix_username"]}"
+          ui.say "> Subscription: #{site_data["name"]}"
 
           # If the VCS type is SVN, we want it in all uppercase, otherwise just
           # capitilise it.
-          vcs_name = (site["vcs_type"] == "svn") ? site["vcs_type"].upcase : site["vcs_type"].capitalize
-          ui.say "> #{vcs_name} URL: #{site["vcs_url"]}"
+          vcs_name = (site_data["vcs_type"] == "svn") ? site_data["vcs_type"].upcase : site_data["vcs_type"].capitalize
+          ui.say "> #{vcs_name} URL: #{site_data["vcs_url"]}"
         end
       end
     end

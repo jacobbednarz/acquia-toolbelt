@@ -7,6 +7,9 @@ module AcquiaToolbelt
         # Output the database information exposing all the available fields and
         # data to the end user.
         #
+        # database - The name of the database you wish to fetch the information
+        #            about.
+        #
         # Returns multiple lines.
         def output_database_instance(database)
           ui.say "> Username: #{database["username"]}"
