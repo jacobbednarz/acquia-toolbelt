@@ -29,7 +29,7 @@ module AcquiaToolbelt
           ui.say "> Host: #{env_info["ssh_host"]}"
           ui.say "> Environment: #{env_info["name"]}"
           ui.say "> Current release: #{env_info["vcs_path"]}"
-          ui.say "> DB clusters: #{env_info["db_clusters"].to_s unless env_info["db_clusters"].nil?}"
+          ui.say "> DB clusters: #{env_info["db_clusters"].join(', ')}"
           ui.say "> Default domain: #{env_info["default_domain"]}"
         end
       end
