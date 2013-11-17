@@ -32,7 +32,7 @@ module AcquiaToolbelt
         # requests.
         if n["cloudapi.acquia.com"].nil?
           puts "No entry for cloudapi.acquia.com within your netrc file."
-          puts "You can login/reset your user credentials by running 'acquia auth:login'"
+          puts "You can login/reset your user credentials by running `acquia auth:login`"
           return
         end
 
@@ -58,7 +58,6 @@ module AcquiaToolbelt
           end
         when "POST"
           response = conn.post "#{endpoint_uri}/#{resource}.json", data.to_json
-          JSON.parse response.body
 
           if parse_request == true
             JSON.parse(response.body)
@@ -67,7 +66,6 @@ module AcquiaToolbelt
           end
         when "QUERY-STRING-POST"
           response = conn.post "#{endpoint_uri}/#{resource}.json?#{data[:key]}=#{data[:value]}", data.to_json
-          JSON.parse response.body
 
           if parse_request == true
             JSON.parse(response.body)
@@ -76,7 +74,6 @@ module AcquiaToolbelt
           end
         when "DELETE"
           response = conn.delete "#{endpoint_uri}/#{resource}.json"
-          JSON.parse response.body
 
           if parse_request == true
             JSON.parse(response.body)
