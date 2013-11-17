@@ -2,6 +2,7 @@ require "netrc"
 require "faraday"
 require "json"
 require "acquia_toolbelt/version"
+
 module AcquiaToolbelt
   class CLI
     class API
