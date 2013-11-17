@@ -13,7 +13,7 @@ describe "sites" do
     VCR.use_cassette("sites/all_sites") do
       response = AcquiaToolbelt::CLI::API.request "sites", "GET", {}, false
       expect(response.status).to eq 200
-      response.body.should include "devcloud:acquiatoolbeltdev"
+      response.body.should include "prod:eeamalone"
     end
   end
 end
