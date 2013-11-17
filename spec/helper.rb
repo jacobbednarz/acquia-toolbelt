@@ -26,8 +26,6 @@ VCR.configure do |c|
 end
 
 # Internal: Determine what authentication method is available and load it.
-#
-# Returns a
 def setup_authentication
   if is_netrc?
     n = Netrc.read
