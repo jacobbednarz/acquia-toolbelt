@@ -30,5 +30,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "2.14.1"
   spec.add_development_dependency "vcr", "2.7.0"
   spec.add_development_dependency "webmock", "1.15.2"
-  spec.add_development_dependency "guard-rspec"
 end
