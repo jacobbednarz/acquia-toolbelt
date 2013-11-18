@@ -8,4 +8,12 @@ describe "ssh" do
       JSON.parse(response.body).should be_an_instance_of Array
     end
   end
+
+  it "should include all required fields" do
+    VCR.use_cassette("ssh/all_sshkeys") do
+      response = AcquiaToolbelt::CLI::API.request "sites/prod:eeamalone/sshkeys", "GET", {}, false
+      expect(response.status).to eq 200
+      response.body.should include("id", "name")
+    end
+  end
 end
