@@ -3,6 +3,9 @@ module AcquiaToolbelt
     class Tasks < AcquiaToolbelt::Thor
       no_tasks do
         # Internal: Output information for a single task item.
+        #
+        # task - The task object that contains all the information about the
+        #        task.
         def output_task_item(task)
           completion_time = (task["completed"].to_i - task["started"].to_i) / 60
           ui.say

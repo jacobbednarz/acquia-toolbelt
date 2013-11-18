@@ -3,9 +3,17 @@ require_relative "./helper"
 describe "ssh" do
   it "response should be an array" do
     VCR.use_cassette("ssh/all_sshkeys") do
-      response = request "sites/devcloud:acquiatoolbeltdev/sshkeys"
-      expect(response.code).to eq "200"
+      response = AcquiaToolbelt::CLI::API.request "sites/prod:eeamalone/sshkeys", "GET", {}, false
+      expect(response.status).to eq 200
       JSON.parse(response.body).should be_an_instance_of Array
+    end
+  end
+
+  it "should include all required fields" do
+    VCR.use_cassette("ssh/all_sshkeys") do
+      response = AcquiaToolbelt::CLI::API.request "sites/prod:eeamalone/sshkeys", "GET", {}, false
+      expect(response.status).to eq 200
+      response.body.should include("id", "name")
     end
   end
 end
