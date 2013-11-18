@@ -30,6 +30,15 @@ module AcquiaToolbelt
       def info(text)
         puts "#{text}".foreground(:cyan)
       end
+
+      # Internal: Used for outputting a pretty debug message.
+      #
+      # text - The text to run through and output to the end user.
+      #
+      # Returns the string coloured and formatted.
+      def debug(text)
+        puts "#{text}".foreground(:yellow)
+      end
     end
   end
 end
