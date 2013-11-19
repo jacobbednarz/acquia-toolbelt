@@ -4,19 +4,20 @@ set -e
 
 # Ensure that we are running this from the root of the project. If the script is
 # run from anywhere else, the cassettes end up in the wrong directory.
-echo "---> Running setup checks..."
+echo "---> Running setup checks"
 if [[ ! -f "README.md" ]] ; then
   echo "     Test suite is not being run from the project root."
   echo "     Please change to the root and re-run the test suite."
   exit 1
 fi
-echo "---> Pre-checks passed."
+echo "---> Pre-checks all passed"
 
 # Bundle it all up.
-echo "---> Bundling..."
-bundle install
-echo "---> Bundling completed."
+echo "---> Fetching all dependencies"
+bundle install | sed "s/^/     /"
+echo "---> Bundling completed"
 
 # Run the test suite.
-echo "---> Running test suite..."
-bundle exec rspec spec
+echo "---> Starting test suite"
+bundle exec rspec spec | sed "s/^/     /"
+echo "---> Test suite completed"
