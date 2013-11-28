@@ -143,7 +143,9 @@ module AcquiaToolbelt
       #
       # Returns string of the message.
       def self.display_error(response)
-        "Oops, an error occurred!\n\nReason returned from the API: #{response["message"]}"
+        "Oops, an error occurred! Reason: #{response["message"]}"
+      end
+
       # Internal: Ensure the response returns a HTTP 200.
       #
       # If the response status isn't a HTTP 200, we need to find out why. This
