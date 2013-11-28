@@ -50,6 +50,7 @@ module AcquiaToolbelt
         case method
         when "GET"
           response = conn.get "#{endpoint_uri}/#{resource}.json"
+          is_successful_response? response
 
           if parse_request == true
             JSON.parse(response.body)
@@ -58,6 +59,7 @@ module AcquiaToolbelt
           end
         when "POST"
           response = conn.post "#{endpoint_uri}/#{resource}.json", data.to_json
+          is_successful_response? response
 
           if parse_request == true
             JSON.parse(response.body)
@@ -66,6 +68,7 @@ module AcquiaToolbelt
           end
         when "QUERY-STRING-POST"
           response = conn.post "#{endpoint_uri}/#{resource}.json?#{data[:key]}=#{data[:value]}", data.to_json
+          is_successful_response? response
 
           if parse_request == true
             JSON.parse(response.body)
@@ -74,6 +77,7 @@ module AcquiaToolbelt
           end
         when "DELETE"
           response = conn.delete "#{endpoint_uri}/#{resource}.json"
+          is_successful_response? response
 
           if parse_request == true
             JSON.parse(response.body)
@@ -139,7 +143,21 @@ module AcquiaToolbelt
       #
       # Returns string of the message.
       def self.display_error(response)
-        "Oops, an error occurred!\n\nReason returned from the API: #{response["message"]}"
+        "Oops, an error occurred! Reason: #{response["message"]}"
+      end
+
+      # Internal: Ensure the response returns a HTTP 200.
+      #
+      # If the response status isn't a HTTP 200, we need to find out why. This
+      # helps identify the issues earlier on and will prevent extra API calls
+      # that won't complete.
+      #
+      # Returns false if the response code isn't a HTTP 200.
+      def self.is_successful_response?(response)
+        if response.status != 200
+          puts display_error(JSON.parse(response.body))
+          return
+        end
       end
     end
   end
