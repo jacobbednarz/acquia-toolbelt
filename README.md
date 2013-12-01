@@ -8,7 +8,7 @@ databases, tasks and domains.
 
 Installation is available (and recommended) via Ruby Gems.
 
-```
+```bash
 $ gem install acquia_toolbelt
 ```
 
@@ -19,7 +19,7 @@ command line.
 You can see all available commands by running `acquia help`. Additonally, more
 information on each command is available via `acquia [COMMAND] help`.
 
-```
+```bash
 $ acquia help
 
 Type 'acquia [COMMAND] help' for more details on subcommands or to show example usage.
@@ -47,8 +47,8 @@ Options:
 
 Without parameters:
 
-```
-$ acquia database:list
+```bash
+$ acquia databases:list
 
 > mydb
 > mydb2
@@ -56,8 +56,8 @@ $ acquia database:list
 
 With parameters:
 
-```
-$ acquia database:list -e dev -d mydb
+```bash
+$ acquia databases:list -e dev -d mydb
 
 > Username: exampledb
 > Password: h5hKN4v2nc*1nd
