@@ -4,6 +4,11 @@
 
 set -e
 
+# Handy indentation function to line it all up.
+indent() {
+  sed -u "s/^/     /"
+}
+
 # Make sure we are building from the project root.
 echo "---> Running setup checks"
 if [[ ! -f "README.md" ]] ; then
@@ -24,22 +29,22 @@ echo "---> Pre-checks all passed"
 
 # Bundle it all up.
 echo "---> Fetching all dependencies"
-bundle install | sed "s/^/     /"
+bundle install | indent
 echo "---> Bundling completed"
 
 # Clean up the previous gem builds.
 echo "---> Cleaning up previous gem builds"
-bundle install | sed "s/^/     /"
+bundle install | indent
 rm -rf acquia_toolbelt-*.gem
 
 # Create the new gem build.
 echo "---> Creating a fresh gem build"
-gem build -q acquia_toolbelt.gemspec | sed "s/^/     /"
+gem build -q acquia_toolbelt.gemspec | indent
 
 # Push out the new version to RubyGems and git.
 echo "---> Pushing out the new version"
 TAG=v`ls acquia_toolbelt-*.gem | sed 's/^acquia_toolbelt-\(.*\)\.gem$/\1/'`
-gem push acquia_toolbelt-*.gem | sed "s/^/     /"
-git push origin master | sed "s/^/     /"
+gem push acquia_toolbelt-*.gem | indent
+git push origin master | indent
 
 echo "---> Release for $TAG has been completed. Good work!"
