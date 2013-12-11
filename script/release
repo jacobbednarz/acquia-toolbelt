@@ -6,7 +6,7 @@ set -e
 
 # Handy indentation function to line it all up.
 indent() {
-  sed -u "s/^/     /"
+  sed "s/^/     /"
 }
 
 # Make sure we are building from the project root.
