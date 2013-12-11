@@ -39,7 +39,7 @@ gem build -q acquia_toolbelt.gemspec | sed "s/^/     /"
 # Push out the new version to RubyGems and git.
 echo "---> Pushing out the new version"
 TAG=v`ls acquia_toolbelt-*.gem | sed 's/^acquia_toolbelt-\(.*\)\.gem$/\1/'`
-# gem push acquia_toolbelt-*.gem | sed "s/^/     /"
-# git push origin master | sed "s/^/     /"
+gem push acquia_toolbelt-*.gem | sed "s/^/     /"
+git push origin master | sed "s/^/     /"
 
 echo "---> Release for $TAG has been completed. Good work!"
