@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+#
+# Create a new release and push it to the world.
+
+set -e
+
+# Handy indentation function to line it all up.
+indent() {
+  sed "s/^/     /"
+}
+
+# Make sure we are building from the project root.
+echo "---> Running setup checks"
+if [[ ! -f "README.md" ]] ; then
+  echo "     The release must be created from the project root."
+  echo "     Please swap before continuing."
+  exit 1
+fi
+echo "---> Project root found"
+
+# Only create releases from the master branch.
+(git branch | grep -q '* master') || {
+  echo "     You are currently on a branch other than master."
+  echo "     However, only master can be used to create a release branch."
+  exit 1
+}
+echo "---> Running on the correct release branch"
+echo "---> Pre-checks all passed"
+
+# Bundle it all up.
+echo "---> Fetching all dependencies"
+bundle install | indent
+echo "---> Bundling completed"
+
+# Clean up the previous gem builds.
+echo "---> Cleaning up previous gem builds"
+bundle install | indent
+rm -rf acquia_toolbelt-*.gem
+
+# Create the new gem build.
+echo "---> Creating a fresh gem build"
+gem build -q acquia_toolbelt.gemspec | indent
+
+# Push out the new version to RubyGems and git.
+echo "---> Pushing out the new version"
+TAG=v`ls acquia_toolbelt-*.gem | sed 's/^acquia_toolbelt-\(.*\)\.gem$/\1/'`
+gem push acquia_toolbelt-*.gem | indent
+git push origin master | indent
+
+echo "---> Release for $TAG has been completed. Good work!"

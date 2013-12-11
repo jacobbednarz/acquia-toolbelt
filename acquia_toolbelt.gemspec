@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = AcquiaToolbelt::VERSION
   spec.authors       = ["Jacob Bednarz"]
   spec.email         = ["jacob.bednarz@gmail.com"]
-  spec.description   = %q{A CLI tool for interacting with Acquia's hosting services.}
-  spec.summary       = ""
+  spec.summary       = %q{A CLI tool for interacting with Acquia's hosting services.}
+  spec.description   = %q{The Acquia Toolbelt allows you to interact with the Acquia Cloud API via the CLI.}
   spec.homepage      = "https://github.com/jacobbednarz/acquia-toolbelt"
   spec.license       = "MIT"
 
