@@ -9,11 +9,19 @@ describe "servers" do
     end
   end
 
-  it "should return basic server fields" do
+  it "should return basic development server fields" do
     VCR.use_cassette("servers/all_dev_servers") do
       response = AcquiaToolbelt::CLI::API.request "sites/prod:eeamalone/envs/dev/servers", "GET", {}, false
       expect(response.status).to eq 200
       response.body.should include("ec2_availability_zone", "name", "fqdn", "ami_type", "ec2_region", "services")
+    end
+  end
+
+  it "should return basic production server fields" do
+    VCR.use_cassette("servers/all_prod_servers") do
+      response = AcquiaToolbelt::CLI::API.request "sites/prod:eeamalone/envs/prod/servers", "GET", {}, false
+      expect(response.status).to eq 200
+      response.body.should include("ec2_availability_zone", "name", "fqdn", "ami_type", "ec2_region", "services", "elb_domain_name")
     end
   end
 
