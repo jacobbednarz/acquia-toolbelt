@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    acquia_toolbelt (2.2.1)
+    acquia_toolbelt (2.3.0)
       faraday (= 0.8.8)
       highline (= 1.6.19)
       json (= 1.8.0)
