@@ -53,6 +53,12 @@ module AcquiaToolbelt
             if server["services"] && server["services"]["external_ip"]
               ui.say "> External IP: #{server["services"]["external_ip"]}"
             end
+
+            # If running a dedicated load balancer, there will be a ELB domain
+            # associated with the load balancing tier.
+            if server["services"] && server["services"]["elb_domain_name"]
+              ui.say "> ELB hostname: #{server["services"]["elb_domain_name"]}"
+            end
           end
         end
       end
