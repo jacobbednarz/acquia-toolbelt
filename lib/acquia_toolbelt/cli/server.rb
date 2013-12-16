@@ -26,9 +26,9 @@ module AcquiaToolbelt
           server_env.each do |server|
             ui.say
             ui.say "> Host: #{server["fqdn"]}"
-            ui.say "> EC2 region: #{server["ec2_region"]}"
+            ui.say "> Region: #{server["ec2_region"]}"
+            ui.say "> Instance type: #{server["ami_type"]}"
             ui.say "> Availability zone: #{server["ec2_availability_zone"]}"
-            ui.say "> EC2 instance type: #{server["ami_type"]}"
 
             # Show how many PHP processes this node can have. Note, this is only
             # available on the web servers.
