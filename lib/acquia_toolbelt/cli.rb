@@ -21,6 +21,10 @@ module AcquiaToolbelt
     include Thor::Actions
 
     def self.start(given_args = ARGV, config = {})
+      if given_args.empty?
+        abort 'No commands found. Run `acquia help` for a list of commands.'
+      end
+
       Thor::Base.shell = AcquiaToolbelt::CLI::UI
       ui = AcquiaToolbelt::CLI::UI.new
 
