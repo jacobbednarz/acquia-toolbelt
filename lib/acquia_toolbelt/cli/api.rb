@@ -26,7 +26,12 @@ module AcquiaToolbelt
       #
       # Retuns JSON object from the response body.
       def self.request(resource, method = "GET", data = {}, parse_request = true)
-        n = Netrc.read
+        # If the netrc file has incorrect permissions, let the user know.
+        begin
+          n = Netrc.read
+        rescue => e
+          puts e.message
+        end
 
         # Make sure there is an entry for the Acquia API before generating the
         # requests.
