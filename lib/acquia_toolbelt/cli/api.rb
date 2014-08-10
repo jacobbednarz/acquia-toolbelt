@@ -1,14 +1,14 @@
-require "netrc"
-require "faraday"
-require "json"
-require "acquia_toolbelt/version"
+require 'netrc'
+require 'faraday'
+require 'json'
+require 'acquia_toolbelt/version'
 
 module AcquiaToolbelt
   class CLI
     class API
       USER_AGENT       = "AcquiaToolbelt/#{AcquiaToolbelt::VERSION}"
-      ENDPOINT         = "https://cloudapi.acquia.com"
-      ENDPOINT_VERSION = "v1"
+      ENDPOINT         = 'https://cloudapi.acquia.com'
+      ENDPOINT_VERSION = 'v1'
 
       # Internal: Send a request to the Acquia API.
       #
@@ -25,7 +25,7 @@ module AcquiaToolbelt
       #                 for the application.
       #
       # Retuns JSON object from the response body.
-      def self.request(resource, method = "GET", data = {}, parse_request = true)
+      def self.request(resource, method = 'GET', data = {}, parse_request = true)
         # If the netrc file has incorrect permissions, let the user know.
         begin
           n = Netrc.read
@@ -35,54 +35,54 @@ module AcquiaToolbelt
 
         # Make sure there is an entry for the Acquia API before generating the
         # requests.
-        if n["cloudapi.acquia.com"].nil?
-          puts "No entry for cloudapi.acquia.com within your netrc file."
-          puts "You can login/reset your user credentials by running `acquia auth:login`"
+        if n['cloudapi.acquia.com'].nil?
+          puts 'No entry for cloudapi.acquia.com within your netrc file.'
+          puts 'You can login/reset your user credentials by running `acquia auth:login`'
           return
         end
 
-        @acquia_user, @acquia_password = n["cloudapi.acquia.com"]
+        @acquia_user, @acquia_password = n['cloudapi.acquia.com']
 
         # Check if the user is behind a proxy and add the proxy settings if
         # they are.
-        conn = (using_proxy?) ? Faraday.new(:proxy => ENV["HTTPS_PROXY"]) : Faraday.new
+        conn = (using_proxy?) ? Faraday.new(:proxy => ENV['HTTPS_PROXY']) : Faraday.new
         conn.basic_auth(@acquia_user, @acquia_password)
 
         # Be nice and send a user agent - help tracking and issue detection on
         # Acquia's end as well as the client.
-        conn.headers["User-Agent"] = "#{AcquiaToolbelt::CLI::API::USER_AGENT}"
+        conn.headers['User-Agent'] = "#{AcquiaToolbelt::CLI::API::USER_AGENT}"
 
         case method
-        when "GET"
+        when 'GET'
           response = conn.get "#{endpoint_uri}/#{resource}.json"
-          is_successful_response? response
+          successful_response? response
 
           if parse_request == true
             JSON.parse(response.body)
           else
             response
           end
-        when "POST"
+        when 'POST'
           response = conn.post "#{endpoint_uri}/#{resource}.json", data.to_json
-          is_successful_response? response
+          successful_response? response
 
           if parse_request == true
             JSON.parse(response.body)
           else
             response
           end
-        when "QUERY-STRING-POST"
+        when 'QUERY-STRING-POST'
           response = conn.post "#{endpoint_uri}/#{resource}.json?#{data[:key]}=#{data[:value]}", data.to_json
-          is_successful_response? response
+          successful_response? response
 
           if parse_request == true
             JSON.parse(response.body)
           else
             response
           end
-        when "DELETE"
+        when 'DELETE'
           response = conn.delete "#{endpoint_uri}/#{resource}.json"
-          is_successful_response? response
+          successful_response? response
 
           if parse_request == true
             JSON.parse(response.body)
@@ -99,13 +99,13 @@ module AcquiaToolbelt
       # a subscription and returns them for use in other methods.
       #
       # Returns an array of environments.
-      def self.get_environments
+      def self.environments
         subscription = default_subscription
         env_data = request "sites/#{subscription}/envs"
 
         envs = []
         env_data.each do |env|
-          envs << env["name"]
+          envs << env['name']
         end
 
         envs
@@ -119,7 +119,7 @@ module AcquiaToolbelt
       #
       # Returns the first subscription name.
       def self.default_subscription
-        sites = request "sites"
+        sites = request 'sites'
         sites.first
       end
 
@@ -138,7 +138,7 @@ module AcquiaToolbelt
       #
       # Return boolean based on whether HTTPS_PROXY is set.
       def self.using_proxy?
-        ENV["HTTPS_PROXY"] ? true : false
+        ENV['HTTPS_PROXY'] ? true : false
       end
 
       # Internal: Show the error message from the response.
@@ -148,7 +148,7 @@ module AcquiaToolbelt
       #
       # Returns string of the message.
       def self.display_error(response)
-        "Oops, an error occurred! Reason: #{response["message"]}"
+        "Oops, an error occurred! Reason: #{response['message']}"
       end
 
       # Internal: Ensure the response returns a HTTP 200.
@@ -158,7 +158,7 @@ module AcquiaToolbelt
       # that won't complete.
       #
       # Returns false if the response code isn't a HTTP 200.
-      def self.is_successful_response?(response)
+      def self.successful_response?(response)
         if response.status != 200
           puts display_error(JSON.parse(response.body))
           return

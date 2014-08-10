@@ -7,32 +7,32 @@ module AcquiaToolbelt
         # task - The task object that contains all the information about the
         #        task.
         def output_task_item(task)
-          completion_time = (task["completed"].to_i - task["started"].to_i) / 60
+          completion_time = (task['completed'].to_i - task['started'].to_i) / 60
           ui.say
-          ui.say "Task ID: #{task["id"].to_i}"
-          ui.say "Description: #{task["description"]}"
-          ui.say "Status: #{task["state"]}"
+          ui.say "Task ID: #{task['id'].to_i}"
+          ui.say "Description: #{task['description']}"
+          ui.say "Status: #{task['state']}"
 
           # If the completion time is greater then 0, output it in minutes
           # otherwise just say it was less then a minute.
           if completion_time > 0
-            ui.say "Compeletion time: About #{completion_time} minutes"
+            ui.say "Completion time: About #{completion_time} minutes"
           else
-            ui.say "Compeletion time: Less than 1 minute"
+            ui.say 'Completion time: Less than 1 minute'
           end
 
-          ui.say "Queue: #{task["queue"]}"
+          ui.say "Queue: #{task['queue']}"
         end
       end
 
       # Public: List all tasks from the Acquia tasks queue(s).
       #
       # Returns a task listing.
-      desc "list", "List all tasks."
+      desc 'list', 'List all tasks.'
       method_option :queue, :type => :string, :aliases => %w(-q),
-        :desc => "Task queue to target."
+        :desc => 'Task queue to target.'
       method_option :count, :type => :string, :aliases => %w(-c),
-        :desc => "Limit the tasks returned."
+        :desc => 'Limit the tasks returned.'
       def list
         if options[:subscription]
           subscription = options[:subscription]
@@ -50,7 +50,7 @@ module AcquiaToolbelt
         # otherwise just add all the tasks.
         if queue
           all_tasks.each do |task|
-            if task["queue"] == queue
+            if task['queue'] == queue
               tasks << task
             end
           end
@@ -61,9 +61,7 @@ module AcquiaToolbelt
         end
 
         # If there is a count to return, restrict it to that required amount.
-        if count && tasks.any?
-          tasks = tasks.last(count.to_i)
-        end
+        tasks = tasks.last(count.to_i) if count && tasks.any?
 
         tasks.each do |task|
           output_task_item(task)

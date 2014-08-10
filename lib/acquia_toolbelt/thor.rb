@@ -1,4 +1,4 @@
-$:.unshift(File.expand_path('../vendor/thor/lib/', File.dirname(__FILE__)))
+$LOAD_PATH.unshift(File.expand_path('../vendor/thor/lib/', File.dirname(__FILE__)))
 require 'thor'
 
 module AcquiaToolbelt
@@ -15,7 +15,7 @@ module AcquiaToolbelt
     include UtilityMethods
     no_tasks do
       def self.help(shell, subcommand = false)
-        list = printable_commands(true, subcommand).sort!{ |a,b| a[0] <=> b[0] }
+        list = printable_commands(true, subcommand).sort! { |a, b| a[0] <=> b[0] }
 
         shell.say "Type 'acquia [COMMAND] help' for more details on subcommands or to show example usage."
 
@@ -23,7 +23,7 @@ module AcquiaToolbelt
           shell.say "#{@package_name} commands:"
         else
           shell.say
-          shell.say "Commands:"
+          shell.say 'Commands:'
         end
 
         shell.print_table(list, :indent => 2, :truncate => true)
@@ -37,14 +37,14 @@ module AcquiaToolbelt
           next if command.hidden? || next if command.name.include? 'help'
           item = []
           item << banner(command, false, subcommand)
-          item << (command.description ? "# #{command.description.gsub(/\s+/m,' ')}" : "") unless command.description.empty?
+          item << (command.description ? "# #{command.description.gsub(/\s+/m,' ')}" : '') unless command.description.empty?
           item
         end.compact
       end
 
       # Define a base for the commands.
       def self.banner_base
-        "acquia"
+        'acquia'
       end
 
       def self.banner(task, task_help = false, subcommand = false)
@@ -56,7 +56,7 @@ module AcquiaToolbelt
                             end
 
         task = (task_help ? task.formatted_usage(self, false, subcommand) : task.name)
-        banner_base + " " + [subcommand_banner, task].compact.join(":")
+        banner_base + ' ' + [subcommand_banner, task].compact.join(':')
       end
 
       def self.handle_no_task_error(task)
