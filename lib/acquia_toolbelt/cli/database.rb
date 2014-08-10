@@ -12,20 +12,20 @@ module AcquiaToolbelt
         #
         # Returns multiple lines.
         def output_database_instance(database)
-          ui.say "> Username: #{database["username"]}"
-          ui.say "> Password: #{database["password"]}"
-          ui.say "> Host: #{database["host"]}"
-          ui.say "> DB cluster: #{database["db_cluster"]}"
-          ui.say "> Instance name: #{database["instance_name"]}"
+          ui.say "> Username: #{database['username']}"
+          ui.say "> Password: #{database['password']}"
+          ui.say "> Host: #{database['host']}"
+          ui.say "> DB cluster: #{database['db_cluster']}"
+          ui.say "> Instance name: #{database['instance_name']}"
         end
       end
 
       # Public: Add a database to the subscription.
       #
       # Returns a status message.
-      desc "add", "Add a database."
-      method_option :database, :type => :string, :aliases => %w(-d), :required => true,
-        :desc => "Name of the database to create."
+      desc 'add', 'Add a database.'
+      method_option :database, :type => :string, :aliases => %w(-d),
+        :required => true, :desc => 'Name of the database to create.'
       def add
         if options[:subscription]
           subscription = options[:subscription]
@@ -34,11 +34,11 @@ module AcquiaToolbelt
         end
 
         database     = options[:database]
-        add_database = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs", "POST", :db => "#{database}"
+        add_database = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs", 'POST', :db => "#{database}"
 
         puts "#{add_database}"
 
-        if add_database["id"]
+        if add_database['id']
           ui.success "Database '#{database}' has been successfully created."
         else
           ui.fail AcquiaToolbelt::CLI::API.display_error(add_database)
@@ -48,13 +48,13 @@ module AcquiaToolbelt
       # Public: Copy a database from one environment to another.
       #
       # Returns a status message.
-      desc "copy", "Copy a database from one environment to another."
+      desc 'copy', 'Copy a database from one environment to another.'
       method_option :database, :type => :string, :aliases => %w(-d), :required => true,
-        :desc => "Name of the database to copy."
+        :desc => 'Name of the database to copy.'
       method_option :origin, :type => :string, :aliases => %w(-o), :required => true,
-        :desc => "Origin of the database to copy."
+        :desc => 'Origin of the database to copy.'
       method_option :target, :type => :string, :aliases => %w(-t), :required => true,
-        :desc => "Target of where to copy the database."
+        :desc => 'Target of where to copy the database.'
       def copy
         if options[:subscription]
           subscription = options[:subscription]
@@ -65,7 +65,7 @@ module AcquiaToolbelt
         database      = options[:database]
         origin        = options[:origin]
         target        = options[:target]
-        copy_database = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs/#{database}/db-copy/#{origin}/#{target}", "POST"
+        copy_database = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs/#{database}/db-copy/#{origin}/#{target}", 'POST'
 
         if copy_database["id"]
           ui.success "Database '#{database}' has been copied from #{origin} to #{target}."
@@ -80,9 +80,9 @@ module AcquiaToolbelt
       # environments.
       #
       # Returns a status message.
-      desc "delete", "Delete a database."
-      method_option :database, :type => :string, :aliases => %w(-d), :required => true,
-        :desc => "Name of the database to delete."
+      desc 'delete', 'Delete a database.'
+      method_option :database, :type => :string, :aliases => %w(-d),
+        :required => true, :desc => 'Name of the database to delete.'
       def delete
         if options[:subscription]
           subscription = options[:subscription]
@@ -91,9 +91,9 @@ module AcquiaToolbelt
         end
 
         database  = options[:database]
-        delete_db = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs/#{database}", "DELETE"
+        delete_db = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs/#{database}", 'DELETE'
 
-        if delete_db["id"]
+        if delete_db['id']
           ui.success "Database '#{database}' has been successfully deleted."
         else
           ui.fail AcquiaToolbelt::CLI::API.display_error(delete_database)
@@ -103,9 +103,9 @@ module AcquiaToolbelt
       # Public: List all databases available within a subscription.
       #
       # Returns a database listing.
-      desc "list", "List all databases."
+      desc 'list', 'List all databases.'
       method_option :database, :type => :string, :aliases => %w(-d),
-        :desc => "Name of the database to view."
+        :desc => 'Name of the database to view.'
       def list
         if options[:subscription]
           subscription = options[:subscription]
@@ -128,7 +128,7 @@ module AcquiaToolbelt
           databases = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs"
           databases.each do |db|
             ui.say
-            ui.say "#{db["name"]}"
+            ui.say "#{db['name']}"
             output_database_instance(db)
           end
 
@@ -137,7 +137,7 @@ module AcquiaToolbelt
           databases = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs"
           ui.say
           databases.each do |db|
-            say "> #{db["name"]}"
+            say "> #{db['name']}"
           end
         end
       end
@@ -145,9 +145,9 @@ module AcquiaToolbelt
       # Public: Create a database instance backup.
       #
       # Returns a status message.
-      desc "backup", "Create a new backup for a database."
-      method_option :database, :type => :string, :aliases => %w(-d), :required => true,
-        :desc => "Name of the database to backup."
+      desc 'backup', 'Create a new backup for a database.'
+      method_option :database, :type => :string, :aliases => %w(-d),
+        :required => true, :desc => 'Name of the database to backup.'
       def backup
         if options[:subscription]
           subscription = options[:subscription]
@@ -157,7 +157,7 @@ module AcquiaToolbelt
 
         database      = options[:database]
         environment   = options[:environment]
-        create_backup = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups", "POST"
+        create_backup = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups", 'POST'
         if create_backup["id"]
           ui.success "The backup for '#{database}' in #{environment} has been started."
         else
@@ -168,9 +168,9 @@ module AcquiaToolbelt
       # Public: List available database backups.
       #
       # Returns all database backups.
-      desc "list-backups", "List all database backups."
-      method_option :database, :type => :string, :aliases => %w(-d), :required => true,
-        :desc => "Name of the database to get the backup for."
+      desc 'list-backups', 'List all database backups.'
+      method_option :database, :type => :string, :aliases => %w(-d),
+        :required => true, :desc => 'Name of the database to get the backup for.'
       def list_backups
         # Ensure we have an environment defined.
         if options[:environment].nil?
@@ -189,24 +189,24 @@ module AcquiaToolbelt
         backups     = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups"
         backups.each do |backup|
           ui.say
-          ui.say "> ID: #{backup["id"]}"
-          ui.say "> MD5: #{backup["checksum"]}"
-          ui.say "> Type: #{backup["type"]}"
-          ui.say "> Path: #{backup["path"]}"
-          ui.say "> Link: #{backup["link"]}"
-          ui.say "> Started: #{Time.at(backup["started"].to_i)}"
-          ui.say "> Completed: #{Time.at(backup["completed"].to_i)}"
+          ui.say "> ID: #{backup['id']}"
+          ui.say "> MD5: #{backup['checksum']}"
+          ui.say "> Type: #{backup['type']}"
+          ui.say "> Path: #{backup['path']}"
+          ui.say "> Link: #{backup['link']}"
+          ui.say "> Started: #{Time.at(backup['started'].to_i)}"
+          ui.say "> Completed: #{Time.at(backup['completed'].to_i)}"
         end
       end
 
       # Public: Restore a database backup.
       #
       # Returns a status message.
-      desc "restore", "Restore a database from a backup."
+      desc 'restore', 'Restore a database from a backup.'
       method_option :id, :type => :string, :aliases => %w(-i),
-        :desc => "Backup ID to restore."
+        :desc => 'Backup ID to restore.'
        method_option :database, :type => :string, :aliases => %w(-d),
-        :desc => "Name of the database to restore."
+        :desc => 'Name of the database to restore.'
       def restore
         # Ensure we have an environment defined.
         if options[:environment].nil?
@@ -224,9 +224,9 @@ module AcquiaToolbelt
         environment = options[:environment]
         database    = options[:database]
         backup_id   = options[:id]
-        restore_db  = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups/#{backup_id}/restore", "POST"
+        restore_db  = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups/#{backup_id}/restore", 'POST'
 
-        if restore_db["id"]
+        if restore_db['id']
           ui.success "Database backup #{backup_id} has been restored to '#{database}' in #{environment}."
         else
           ui.fail AcquiaToolbelt::CLI::API.display_error(restore_db)

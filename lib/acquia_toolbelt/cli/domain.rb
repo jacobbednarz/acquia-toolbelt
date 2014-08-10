@@ -8,13 +8,13 @@ module AcquiaToolbelt
         def purge_domain(subscription, environment, domain)
           # Ensure all the required fields are available.
           if subscription.nil? || environment.nil? || domain.nil?
-            ui.fail "Purge request is missing a required parameter."
+            ui.fail 'Purge request is missing a required parameter.'
             return
           end
 
-          purge_request = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}/cache", "DELETE"
+          purge_request = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}/cache", 'DELETE'
 
-          if purge_request["id"]
+          if purge_request['id']
             ui.success "#{domain} has been successfully purged."
           else
             ui.fail AcquiaToolbelt::CLI::API.display_error(purge_request)
@@ -25,7 +25,7 @@ module AcquiaToolbelt
       # Public: List all domains on a subscription.
       #
       # Returns all domains.
-      desc "list", "List all domains."
+      desc 'list', 'List all domains.'
       def list
         # Set the subscription if it has been passed through, otherwise use the
         # default.
@@ -40,7 +40,7 @@ module AcquiaToolbelt
           environments = []
           environments << options[:environment]
         else
-          environments = AcquiaToolbelt::CLI::API.get_environments
+          environments = AcquiaToolbelt::CLI::API.environments
         end
 
         environments.each do |environment|
@@ -49,7 +49,7 @@ module AcquiaToolbelt
           ui.say "Environment: #{environment}" unless options[:environment]
 
           domains.each do |domain|
-            ui.say "> #{domain["name"]}"
+            ui.say "> #{domain['name']}"
           end
         end
       end
@@ -57,9 +57,9 @@ module AcquiaToolbelt
       # Public: Add a domain to the subscription.
       #
       # Returns a status message.
-      desc "add", "Add a domain."
+      desc 'add', 'Add a domain.'
       method_option :domain, :type => :string, :aliases => %w(-d), :required => true,
-        :desc => "Full URL of the domain to add - No slashes or protocols required."
+        :desc => 'Full URL of the domain to add - No slashes or protocols required.'
       def add
         if options[:environment].nil?
           ui.say "No value provided for required options '--environment'"
@@ -74,9 +74,9 @@ module AcquiaToolbelt
 
         environment = options[:environment]
         domain      = options[:domain]
-        add_domain  = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}", "POST"
+        add_domain  = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains/#{domain}", 'POST'
 
-        if add_domain["id"]
+        if add_domain['id']
           ui.success "Domain #{domain} has been successfully added to #{environment}."
         else
           ui.fail AcquiaToolbelt::CLI::API.display_error(add_domain)
@@ -86,9 +86,9 @@ module AcquiaToolbelt
       # Public: Delete a domain from an environment.
       #
       # Returns a status message.
-      desc "delete", "Delete a domain."
+      desc 'delete', 'Delete a domain.'
       method_option :domain, :type => :string, :aliases => %w(-d), :required => true,
-        :desc => "Full URL of the domain to delete - No slashes or protocols required."
+        :desc => 'Full URL of the domain to delete - No slashes or protocols required.'
       def delete
         if options[:subscription]
           subscription = options[:subscription]
@@ -98,7 +98,7 @@ module AcquiaToolbelt
 
         environment   = options[:environment]
         domain        = options[:domain]
-        delete_domain = AcquiaToolbelt::CLI::API.request "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", "DELETE"
+        delete_domain = AcquiaToolbelt::CLI::API.request "/sites/#{subscription}/envs/#{environment}/domains/#{domain}", 'DELETE'
 
         if delete_domain["id"]
           ui.success "Domain #{domain} has been successfully deleted from #{environment}."
@@ -110,9 +110,9 @@ module AcquiaToolbelt
       # Public: Purge a domains web cache.
       #
       # Returns a status message.
-      desc "purge", "Purge a domain's web cache."
+      desc 'purge', 'Purge a domain\'s web cache.'
       method_option :domain, :type => :string, :aliases => %w(-d),
-        :desc => "URL of the domain to purge."
+        :desc => 'URL of the domain to purge.'
       def purge
         if options[:subscription]
           subscription = options[:subscription]
@@ -135,10 +135,10 @@ module AcquiaToolbelt
           if all_env_clear == "y"
             domains = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains"
             domains.each do |domain|
-              purge_domain("#{subscription}", "#{environment}", "#{domain["name"]}")
+              purge_domain("#{subscription}", "#{environment}", "#{domain['name']}")
             end
           else
-            ui.info "Ok, no action has been taken."
+            ui.info 'Ok, no action has been taken.'
           end
         end
       end
@@ -146,13 +146,13 @@ module AcquiaToolbelt
       # Public: Move domains from one environment to another.
       #
       # Returns a status message.
-      desc "move", "Move a domain to another environment."
+      desc 'move', 'Move a domain to another environment.'
       method_option :domains, :type => :string, :aliases => %w(-d),
-        :desc => "List of comma separated domains to move."
+        :desc => 'List of comma separated domains to move.'
       method_option :origin, :type => :string, :aliases => %w(-o),
-        :desc => "Origin environment to move the domains from."
+        :desc => 'Origin environment to move the domains from.'
       method_option :target, :type => :string, :aliases => %w(-t),
-        :desc => "Target environment to move the domains to."
+        :desc => 'Target environment to move the domains to.'
       def move
         if options[:subscription]
           subscription = options[:subscription]
@@ -160,13 +160,13 @@ module AcquiaToolbelt
           subscription = AcquiaToolbelt::CLI::API.default_subscription
         end
 
-        domains = options[:domains].split(",")
+        domains = options[:domains].split(',')
         origin  = options[:origin]
         target  = options[:target]
         data    = { :domains => domains }
 
-        move_domain = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/domain-move/#{origin}/#{target}", "POST", data
-        if move_domain["id"]
+        move_domain = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/domain-move/#{origin}/#{target}", 'POST', data
+        if move_domain['id']
           ui.success "Domain move from #{origin} to #{target} has been successfully completed."
         else
           ui.fail AcquiaToolbelt::CLI::API.display_error(move_domain)

@@ -1,5 +1,5 @@
-require "highline/import"
-require "rainbow"
+require 'highline/import'
+require 'rainbow'
 
 module AcquiaToolbelt
   class CLI

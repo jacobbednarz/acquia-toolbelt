@@ -6,7 +6,7 @@ module AcquiaToolbelt
       # Output environment information.
       #
       # Returns enviroment data.
-      desc "list", "List all environment data."
+      desc 'list', 'List all environment data.'
       def list
         if options[:subscription]
           subscription = options[:subscription]
@@ -20,17 +20,17 @@ module AcquiaToolbelt
         if environment
           environments = [environment]
         else
-          environments = AcquiaToolbelt::CLI::API.get_environments
+          environments = AcquiaToolbelt::CLI::API.environments
         end
 
-        environments.each do |environment|
-          env_info = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}"
+        environments.each do |env|
+          env_info = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{env}"
           ui.say
-          ui.say "> Host: #{env_info["ssh_host"]}"
-          ui.say "> Environment: #{env_info["name"]}"
-          ui.say "> Current release: #{env_info["vcs_path"]}"
-          ui.say "> DB clusters: #{env_info["db_clusters"].join(', ')}"
-          ui.say "> Default domain: #{env_info["default_domain"]}"
+          ui.say "> Host: #{env_info['ssh_host']}"
+          ui.say "> Environment: #{env_info['name']}"
+          ui.say "> Current release: #{env_info['vcs_path']}"
+          ui.say "> DB clusters: #{env_info['db_clusters'].join(', ')}"
+          ui.say "> Default domain: #{env_info['default_domain']}"
         end
       end
 
@@ -39,10 +39,11 @@ module AcquiaToolbelt
       # Valid actions are enable or disable.
       #
       # Returns a status message.
-      desc "live-development", "Enable/disbale live development on an environment."
-      method_option :action, :type => :string, :aliases => %w(-a), :required => true,
-        :desc => "Status of live development (enable/disable).",
-        :enum => ["enable", "disable"]
+      desc 'live-development', 'Enable/disbale live development on an environment.'
+      method_option :action, :type => :string, :aliases => %w(-a),
+        :required => true, :enum => ['enable', 'disable'],
+        :desc => 'Status of live development (enable/disable).'
+
       def live_development
         if options[:environment].nil?
           ui.say "No value provided for required options '--environment'"
@@ -58,9 +59,9 @@ module AcquiaToolbelt
         action      = options[:action]
         environment = options[:environment]
 
-        live_development_set = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/livedev/#{action}", "POST"
+        live_development_set = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/livedev/#{action}", 'POST'
 
-        if live_development_set["id"]
+        if live_development_set['id']
           ui.success "Live development has been successfully #{action}d on #{environment}."
         else
           ui.fail AcquiaToolbelt::CLI::API.display_error(live_development_set)
