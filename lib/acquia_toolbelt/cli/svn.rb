@@ -12,12 +12,23 @@ module AcquiaToolbelt
           subscription = AcquiaToolbelt::CLI::API.default_subscription
         end
 
+        ui.say
+
+        rows = []
+        headings = [
+          'ID',
+          'Name'
+        ]
+
         svn_users = AcquiaToolbelt::CLI::API.request  "sites/#{subscription}/svnusers"
         svn_users.each do |user|
-          ui.say
-          ui.say "> ID: #{user['id']}"
-          ui.say "> Name: #{user['username']}"
+          row_data = []
+          row_data << user['id']
+          row_data << user['username']
+          rows << row_data
         end
+
+        ui.output_table('', headings, rows)
       end
 
       # Public: Create a new SVN user.
