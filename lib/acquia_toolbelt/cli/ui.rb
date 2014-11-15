@@ -54,7 +54,7 @@ module AcquiaToolbelt
         table.headings = headings
         table.style = {
           :padding_left  => 1,
-          :padding_right => 1,
+          :padding_right => 1
         }
 
         puts table
