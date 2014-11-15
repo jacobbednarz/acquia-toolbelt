@@ -23,15 +23,31 @@ module AcquiaToolbelt
           environments = AcquiaToolbelt::CLI::API.environments
         end
 
+        ui.say
+
+        rows = []
+        headings = [
+          'Host',
+          'Environment',
+          'Current release',
+          'Live development',
+          'DB clusters',
+          'Default domain'
+        ]
+
         environments.each do |env|
           env_info = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{env}"
-          ui.say
-          ui.say "> Host: #{env_info['ssh_host']}"
-          ui.say "> Environment: #{env_info['name']}"
-          ui.say "> Current release: #{env_info['vcs_path']}"
-          ui.say "> DB clusters: #{env_info['db_clusters'].join(', ')}"
-          ui.say "> Default domain: #{env_info['default_domain']}"
+          row_data = []
+          row_data << env_info['ssh_host']
+          row_data << env_info['name']
+          row_data << env_info['vcs_path']
+          row_data << env_info['livedev'].capitalize
+          row_data << env_info['db_clusters'].join(', ')
+          row_data << env_info['default_domain']
+          rows << row_data
         end
+
+        ui.output_table('', headings, rows)
       end
 
       # Public: Toggle whether live development is enabled on an environment.
