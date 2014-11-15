@@ -14,13 +14,29 @@ module AcquiaToolbelt
           subscription = AcquiaToolbelt::CLI::API.default_subscription
         end
 
+        ui.say
+
+        rows = []
+        headings = [
+          'ID',
+          'Nickname',
+          'Fingerprint',
+          'Shell access',
+          'VCS access'
+        ]
+
         users = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/sshkeys"
         users.each do |user|
-          say
-          say "> ID: #{user['id']}"
-          say "> Name: #{user['nickname']}"
-          say "> Fingerprint: #{SSHKey.fingerprint user['ssh_pub_key']}"
+          row_data = []
+          row_data << user['id']
+          row_data << user['nickname']
+          row_data << SSHKey.fingerprint(user['ssh_pub_key'])
+          row_data << user['shell_access']
+          row_data << user['vcs_access']
+          rows << row_data
         end
+
+        ui.output_table('', headings, rows)
       end
 
       # Public: Delete a SSH key.

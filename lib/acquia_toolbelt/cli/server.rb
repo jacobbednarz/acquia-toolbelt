@@ -21,6 +21,7 @@ module AcquiaToolbelt
         # Loop over each environment and get all the associated server data.
         environments.each do |env|
           ui.say
+
           rows = []
           headings = [
             'FQDN',
