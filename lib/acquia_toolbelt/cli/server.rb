@@ -22,6 +22,16 @@ module AcquiaToolbelt
         environments.each do |env|
           ui.say
           rows = []
+          headings = [
+            'FQDN',
+            'Availability zone',
+            'Type',
+            'PHP processes',
+            'Environment state',
+            'Web state',
+            'Varnish state',
+            'External IP'
+          ]
 
           server_env = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{env}/servers"
           server_env.each do |server|
@@ -69,19 +79,7 @@ module AcquiaToolbelt
             rows << row_data
           end
 
-          title = "Environment: #{env}"
-          headings = [
-            'FQDN',
-            'Availability zone',
-            'Type',
-            'PHP processes',
-            'Environment state',
-            'Web state',
-            'Varnish state',
-            'External IP'
-          ]
-
-          ui.output_table(title, headings, rows)
+          ui.output_table("Environment: #{env}", headings, rows)
         end
       end
     end

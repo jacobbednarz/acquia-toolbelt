@@ -47,18 +47,17 @@ module AcquiaToolbelt
       # rows    - An array of the row data to output.
       #
       # Outputs a table to the end user.
-      def output_table(title = '', headings = [], rows)
-        puts Terminal::Table.new(
-          :title    => title,
-          :rows     => rows,
-          :headings => headings,
-          style: {
-            :padding_right => 3,
-            :border_x      => '',
-            :border_i      => '',
-            :border_y      => ''
-          }
-        )
+      def output_table(title = '', headings, rows)
+        table = Terminal::Table.new
+        table.title = title unless title.empty?
+        table.rows = rows
+        table.headings = headings
+        table.style = {
+          :padding_left  => 1,
+          :padding_right => 1,
+        }
+
+        puts table
       end
     end
   end

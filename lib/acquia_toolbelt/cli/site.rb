@@ -7,26 +7,31 @@ module AcquiaToolbelt
       desc 'list', 'List all subscriptions you have access to.'
       def list
         sites = AcquiaToolbelt::CLI::API.request 'sites'
+        ui.say
+
+        rows = []
+        headings = [
+          'Subscription name',
+          'Unix username',
+          'Realm name',
+          'UUID',
+          'Production mode'
+        ]
 
         sites.each do |site|
-          ui.say
           # Get the individual subscription information.
           site_data = AcquiaToolbelt::CLI::API.request "sites/#{site}"
 
-          ui.say "#{site_data['title']}"
-          ui.say "> Username: #{site_data['unix_username']}"
-          ui.say "> Subscription: #{site_data['name']}"
-
-          # If the VCS type is SVN, we want it in all uppercase, otherwise just
-          # capitilise it.
-          if site_data['vcs_type'] == 'svn'
-            vcs_name = site_data['vcs_type'].upcase
-          else
-            vcs_name = site_data['vcs_type'].capitalize
-          end
-
-          ui.say "> #{vcs_name} URL: #{site_data['vcs_url']}"
+          row_data = []
+          row_data << site_data['title']
+          row_data << site_data['unix_username']
+          row_data << site_data['name']
+          row_data << site_data['uuid']
+          row_data << site_data['production_mode']
+          rows << row_data
         end
+
+        ui.output_table('', headings, rows)
       end
     end
   end
