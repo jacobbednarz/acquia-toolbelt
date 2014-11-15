@@ -187,16 +187,31 @@ module AcquiaToolbelt
         database    = options[:database]
         environment = options[:environment]
         backups     = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups"
+
+        ui.say
+
+        rows = []
+        headings = [
+          'ID',
+          'Checksum',
+          'Type',
+          'Path',
+          'Start',
+          'Completed'
+        ]
+
         backups.each do |backup|
-          ui.say
-          ui.say "> ID: #{backup['id']}"
-          ui.say "> MD5: #{backup['checksum']}"
-          ui.say "> Type: #{backup['type']}"
-          ui.say "> Path: #{backup['path']}"
-          ui.say "> Link: #{backup['link']}"
-          ui.say "> Started: #{Time.at(backup['started'].to_i)}"
-          ui.say "> Completed: #{Time.at(backup['completed'].to_i)}"
+          row_data = []
+          row_data << backup['id']
+          row_data << backup['checksum']
+          row_data << backup['type']
+          row_data << backup['path']
+          row_data << Time.at(backup['started'].to_i)
+          row_data << Time.at(backup['completed'].to_i)
+          rows << row_data
         end
+
+        ui.output_table('', headings, rows)
       end
 
       # Public: Restore a database backup.
