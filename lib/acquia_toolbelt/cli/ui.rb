@@ -39,6 +39,27 @@ module AcquiaToolbelt
       def debug(text)
         puts "#{text}".foreground(:yellow)
       end
+
+      # Internal: Render a CLI table.
+      #
+      # title   - The title to display at the top of the table.
+      # heading - Header rows for the table.
+      # rows    - An array of the row data to output.
+      #
+      # Outputs a table to the end user.
+      def output_table(title = '', headings = [], rows)
+        puts Terminal::Table.new(
+          :title    => title,
+          :rows     => rows,
+          :headings => headings,
+          style: {
+            :padding_right => 3,
+            :border_x      => '',
+            :border_i      => '',
+            :border_y      => ''
+          }
+        )
+      end
     end
   end
 end

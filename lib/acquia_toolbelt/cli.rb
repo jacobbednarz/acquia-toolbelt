@@ -1,6 +1,7 @@
 require 'acquia_toolbelt'
 require 'acquia_toolbelt/error'
 require 'acquia_toolbelt/thor'
+require 'terminal-table'
 
 module AcquiaToolbelt
   class CLI < AcquiaToolbelt::Thor
