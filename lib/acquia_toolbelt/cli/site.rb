@@ -12,7 +12,7 @@ module AcquiaToolbelt
         rows = []
         headings = [
           'Subscription name',
-          'Unix username',
+          'Username',
           'Realm name',
           'UUID',
           'Production mode'
