@@ -43,15 +43,21 @@ module AcquiaToolbelt
           environments = AcquiaToolbelt::CLI::API.environments
         end
 
+        ui.say
+
+        rows = []
+        headings = ['Domain']
+
         environments.each do |environment|
           domains = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/domains"
-          ui.say
-          ui.say "Environment: #{environment}" unless options[:environment]
-
           domains.each do |domain|
-            ui.say "> #{domain['name']}"
+            row_data = []
+            row_data << domain['name']
+            rows << row_data
           end
         end
+
+        ui.output_table('', headings, rows)
       end
 
       # Public: Add a domain to the subscription.
@@ -110,7 +116,7 @@ module AcquiaToolbelt
       # Public: Purge a domains web cache.
       #
       # Returns a status message.
-      desc 'purge', 'Purge a domain\'s web cache.'
+      desc 'purge', "Purge a domain's web cache."
       method_option :domain, :type => :string, :aliases => %w(-d),
         :desc => 'URL of the domain to purge.'
       def purge

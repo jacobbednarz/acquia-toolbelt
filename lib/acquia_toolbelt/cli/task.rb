@@ -8,20 +8,23 @@ module AcquiaToolbelt
         #        task.
         def output_task_item(task)
           completion_time = (task['completed'].to_i - task['started'].to_i) / 60
-          ui.say
-          ui.say "Task ID: #{task['id'].to_i}"
-          ui.say "Description: #{task['description']}"
-          ui.say "Status: #{task['state']}"
+          row_data = []
+          description = task['description'].scan(/.{1,50}[\w\=]/).map(&:strip)
+
+          row_data << task['id'].to_i
+          row_data << task['queue']
+          row_data << description.join("\n")
+          row_data << task['state'].capitalize
 
           # If the completion time is greater then 0, output it in minutes
           # otherwise just say it was less then a minute.
           if completion_time > 0
-            ui.say "Completion time: About #{completion_time} minutes"
+            row_data << "About #{completion_time} minutes"
           else
-            ui.say 'Completion time: Less than 1 minute'
+            row_data << 'Less than 1 minute'
           end
 
-          ui.say "Queue: #{task['queue']}"
+          row_data
         end
       end
 
@@ -40,19 +43,27 @@ module AcquiaToolbelt
           subscription = AcquiaToolbelt::CLI::API.default_subscription
         end
 
-        queue = options[:queue]
-        count = options[:count]
+        ui.say
+
+        queue    = options[:queue]
+        count    = options[:count]
+        tasks    = []
+        rows     = []
+        headings = [
+          'ID',
+          'Queue',
+          'Description',
+          'State',
+          'Completion time'
+        ]
 
         all_tasks = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/tasks"
-        tasks = []
 
         # Fetch a single queue from the tasks list if the queue parameter is set
         # otherwise just add all the tasks.
         if queue
           all_tasks.each do |task|
-            if task['queue'] == queue
-              tasks << task
-            end
+            tasks << task if task['queue'] == queue
           end
         else
           all_tasks.each do |task|
@@ -64,8 +75,10 @@ module AcquiaToolbelt
         tasks = tasks.last(count.to_i) if count && tasks.any?
 
         tasks.each do |task|
-          output_task_item(task)
+          rows << output_task_item(task)
         end
+
+        ui.output_table('', headings, rows)
       end
     end
   end

@@ -10,13 +10,17 @@ module AcquiaToolbelt
         # database - The name of the database you wish to fetch the information
         #            about.
         #
-        # Returns multiple lines.
-        def output_database_instance(database)
-          ui.say "> Username: #{database['username']}"
-          ui.say "> Password: #{database['password']}"
-          ui.say "> Host: #{database['host']}"
-          ui.say "> DB cluster: #{database['db_cluster']}"
-          ui.say "> Instance name: #{database['instance_name']}"
+        # Returns the row of data for the database.
+        def database_details(database)
+          row_data = []
+          row_data << database['name']
+          row_data << database['username']
+          row_data << database['password']
+          row_data << database['host']
+          row_data << database['db_cluster']
+          row_data << database['instance_name']
+
+          row_data
         end
       end
 
@@ -35,8 +39,6 @@ module AcquiaToolbelt
 
         database     = options[:database]
         add_database = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs", 'POST', :db => "#{database}"
-
-        puts "#{add_database}"
 
         if add_database['id']
           ui.success "Database '#{database}' has been successfully created."
@@ -113,33 +115,45 @@ module AcquiaToolbelt
           subscription = AcquiaToolbelt::CLI::API.default_subscription
         end
 
+        ui.say
+
         database    = options[:database]
         environment = options[:environment]
+        rows        = []
+        headings    = [
+          'Name',
+          'Username',
+          'Password',
+          'Host',
+          'DB cluster',
+          'Instance name'
+        ]
 
         # Output a single database where the name and environment are specified.
         if database && environment
           database = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}"
-          ui.say
-          output_database_instance(database)
+          rows << database_details(database)
 
         # Only an environment was set so get all expanded data for the requested
         # environment.
         elsif environment
           databases = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs"
           databases.each do |db|
-            ui.say
-            ui.say "#{db['name']}"
-            output_database_instance(db)
+            rows << database_details(db)
           end
 
-        # Just a general listing of the databases, no in depth details.
+        # If no name or environment is passed, just throw back all the database
+        # names - no in depth details.
         else
+          # Only set the 'name' header as we don't need the rest of the headers.
+          headings = ['Name']
           databases = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/dbs"
-          ui.say
           databases.each do |db|
-            say "> #{db['name']}"
+            rows << [db['name']]
           end
         end
+
+        ui.output_table('', headings, rows)
       end
 
       # Public: Create a database instance backup.
@@ -187,16 +201,31 @@ module AcquiaToolbelt
         database    = options[:database]
         environment = options[:environment]
         backups     = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{environment}/dbs/#{database}/backups"
+
+        ui.say
+
+        rows = []
+        headings = [
+          'ID',
+          'Checksum',
+          'Type',
+          'Path',
+          'Start',
+          'Completed'
+        ]
+
         backups.each do |backup|
-          ui.say
-          ui.say "> ID: #{backup['id']}"
-          ui.say "> MD5: #{backup['checksum']}"
-          ui.say "> Type: #{backup['type']}"
-          ui.say "> Path: #{backup['path']}"
-          ui.say "> Link: #{backup['link']}"
-          ui.say "> Started: #{Time.at(backup['started'].to_i)}"
-          ui.say "> Completed: #{Time.at(backup['completed'].to_i)}"
+          row_data = []
+          row_data << backup['id']
+          row_data << backup['checksum']
+          row_data << backup['type']
+          row_data << backup['path']
+          row_data << Time.at(backup['started'].to_i)
+          row_data << Time.at(backup['completed'].to_i)
+          rows << row_data
         end
+
+        ui.output_table('', headings, rows)
       end
 
       # Public: Restore a database backup.

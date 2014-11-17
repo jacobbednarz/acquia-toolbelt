@@ -1,4 +1,3 @@
-# coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'acquia_toolbelt/version'
@@ -25,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'rainbow', '1.1.4'
   spec.add_runtime_dependency 'sshkey', '1.6.0'
   spec.add_runtime_dependency 'multi_json', '1.8.2'
+  spec.add_runtime_dependency 'terminal-table', '1.4.5'
 
   spec.add_development_dependency 'bundler', '~> 1.3'
   spec.add_development_dependency 'rake', '10.1.0'

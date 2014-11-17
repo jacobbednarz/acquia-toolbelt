@@ -21,46 +21,66 @@ module AcquiaToolbelt
         # Loop over each environment and get all the associated server data.
         environments.each do |env|
           ui.say
-          ui.say "Environment: #{env}"
+
+          rows = []
+          headings = [
+            'FQDN',
+            'Availability zone',
+            'Type',
+            'PHP processes',
+            'Environment state',
+            'Web state',
+            'Varnish state',
+            'External IP'
+          ]
 
           server_env = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{env}/servers"
           server_env.each do |server|
-            ui.say
-            ui.say "> Host: #{server['fqdn']}"
-            ui.say "> Region: #{server['ec2_region']}"
-            ui.say "> Instance type: #{server['ami_type']}"
-            ui.say "> Availability zone: #{server['ec2_availability_zone']}"
+            row_data = []
+            row_data << server['fqdn']
+            row_data << server['ec2_availability_zone']
+            row_data << server['ami_type']
 
             # Show how many PHP processes this node can have. Note, this is only
             # available on the web servers.
-            if server['services'] && server['services']['php_max_procs']
-              ui.say "> PHP max processes: #{server['services']['php_max_procs']}"
-            end
-
-            if server['services'] && server['services']['status']
-              ui.say "> Status: #{server['services']['status']}"
+            if server['services'] && server['services']['web']
+              row_data << server['services']['web']['php_max_procs']
+            else
+              row_data << 'n/a'
             end
 
             if server['services'] && server['services']['web']
-              ui.say "> Web status: #{server['services']['web']['status']}"
+              row_data << server['services']['web']['env_status']
+            else
+              row_data << 'n/a'
+            end
+
+            if server['services'] && server['services']['web']
+              row_data << server['services']['web']['status']
+            else
+              row_data << 'n/a'
             end
 
             # The state of varnish.
             if server['services'] && server['services']['varnish']
-              ui.say "> Varnish status: #{server['services']['varnish']['status']}"
+              # Replace underscores with a space to make the output slightly
+              # nicer.
+              row_data << server['services']['varnish']['status'].sub('_', ' ')
+            else
+              row_data << 'n/a'
             end
 
             # Only load balancers will have the 'external IP' property.
             if server['services'] && server['services']['external_ip']
-              ui.say "> External IP: #{server['services']['external_ip']}"
+              row_data << server['services']['external_ip']
+            else
+              row_data << 'n/a'
             end
 
-            # If running a dedicated load balancer, there will be a ELB domain
-            # associated with the load balancing tier.
-            if server['services'] && server['services']['elb_domain_name']
-              ui.say "> ELB hostname: #{server['services']['elb_domain_name']}"
-            end
+            rows << row_data
           end
+
+          ui.output_table("Environment: #{env}", headings, rows)
         end
       end
     end

@@ -15,7 +15,7 @@ module AcquiaToolbelt
       def login
         cli = HighLine.new
         user = cli.ask('Enter your username: ')
-        password = cli.ask('Enter your password: ') { |q| q.echo = false }
+        password = cli.ask('Enter your password (typing will be hidden): ') { |q| q.echo = false }
 
         # Update (or create if needed) the netrc file that will contain the user
         # authentication details.
