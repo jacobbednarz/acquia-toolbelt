@@ -1,4 +1,4 @@
-# Acquia Toolbelt 
+# Acquia Toolbelt
 
 The Acquia Toolbelt is a CLI tool for using the Acquia Cloud API. Some of the
 features include getting information around your servers, subscription,
@@ -50,20 +50,26 @@ Without parameters:
 ```bash
 $ acquia databases:list
 
-> mydb
-> mydb2
++------------------------+
+| Name                   |
++------------------------+
+| acquiatoolbeltdev      |
+| example-db             |
+| newer-db               |
++------------------------+
 ```
 
 With parameters:
 
 ```bash
-$ acquia databases:list -e dev -d mydb
+$ acquia databases:list --environment=dev --database=acquiatoolbeltdev
 
-> Username: exampledb
-> Password: h5hKN4v2nc*1nd
-> Host: staging-1234
-> DB cluster: 1111
-> Instance name: mydb8717
++-------------------+----------+-----------------+-----------+------------+----------------------+
+| Name              | Username | Password        | Host      | DB cluster | Instance name        |
++-------------------+----------+-----------------+-----------+------------+----------------------+
+| acquiatoolbeltdev | s22614   | 7Ps5kU7s3VEvFTj | free-4422 | 3119       | acquiatoolbeltdevdev |
++-------------------+----------+-----------------+-----------+------------+----------------------+
+
 ```
 
 ## Getting started
@@ -144,6 +150,7 @@ This library aims to support and is [tested against](https://travis-ci.org/jacob
 * Ruby 1.9.2
 * Ruby 1.9.3
 * Ruby 2.0.0
+* Ruby 2.1.0
 
 If you would like support for other implementations or versions, please open an
 issue and it can be looked into.
