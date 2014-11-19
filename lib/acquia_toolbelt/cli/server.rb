@@ -31,7 +31,8 @@ module AcquiaToolbelt
             'Environment state',
             'Web state',
             'Varnish state',
-            'External IP'
+            'External IP',
+            'ELB domain'
           ]
 
           server_env = AcquiaToolbelt::CLI::API.request "sites/#{subscription}/envs/#{env}/servers"
@@ -73,6 +74,13 @@ module AcquiaToolbelt
             # Only load balancers will have the 'external IP' property.
             if server['services'] && server['services']['external_ip']
               row_data << server['services']['external_ip']
+            else
+              row_data << 'n/a'
+            end
+
+            # Only load balancers will have the 'ELB domain name' property.
+            if server['services'] && server['services']['elb_domain_name']
+              row_data << server['services']['elb_domain_name']
             else
               row_data << 'n/a'
             end
